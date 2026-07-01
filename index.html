@@ -650,46 +650,47 @@
     <div class="sec-title">Fragen oder Feedback?</div>
     <p class="sec-sub">Jeder Schützengruß hilft. Schreib uns direkt — wir antworten innerhalb von 24 Stunden.</p>
 
-    <form action="https://formspree.io/f/DEINE_FORMSPREE_ID" method="POST" id="contact-form" style="max-width: 560px;">
-      <div style="display:flex; flex-direction:column; gap:12px;">
-        <div>
-          <label for="name" style="font-size:12px; color:var(--muted); letter-spacing:0.06em; text-transform:uppercase; display:block; margin-bottom:6px;">Name</label>
-          <input type="text" id="name" name="name" required placeholder="Max Mustermann"
-            style="width:100%; background:var(--card); border:0.5px solid var(--gold-border); border-radius:8px; padding:12px 14px; font-size:14px; color:var(--text); outline:none; font-family:inherit;"
-            onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--gold-border)'">
-        </div>
-        <div>
-          <label for="email" style="font-size:12px; color:var(--muted); letter-spacing:0.06em; text-transform:uppercase; display:block; margin-bottom:6px;">E-Mail</label>
-          <input type="email" id="email" name="email" required placeholder="deine@email.de"
-            style="width:100%; background:var(--card); border:0.5px solid var(--gold-border); border-radius:8px; padding:12px 14px; font-size:14px; color:var(--text); outline:none; font-family:inherit;"
-            onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--gold-border)'">
-        </div>
-        <div>
-          <label for="betreff" style="font-size:12px; color:var(--muted); letter-spacing:0.06em; text-transform:uppercase; display:block; margin-bottom:6px;">Betreff</label>
-          <select id="betreff" name="betreff"
-            style="width:100%; background:var(--card); border:0.5px solid var(--gold-border); border-radius:8px; padding:12px 14px; font-size:14px; color:var(--muted); outline:none; font-family:inherit; cursor:pointer;"
-            onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--gold-border)'">
-            <option value="allgemein">Allgemeine Anfrage</option>
-            <option value="vereinspaket">Vereinspaket anfragen</option>
-            <option value="feedback">Feedback zur App</option>
-            <option value="technisch">Technisches Problem</option>
-            <option value="premium">Premium / Abrechnung</option>
-          </select>
-        </div>
-        <div>
-          <label for="nachricht" style="font-size:12px; color:var(--muted); letter-spacing:0.06em; text-transform:uppercase; display:block; margin-bottom:6px;">Nachricht</label>
-          <textarea id="nachricht" name="nachricht" required rows="5" placeholder="Deine Nachricht..."
-            style="width:100%; background:var(--card); border:0.5px solid var(--gold-border); border-radius:8px; padding:12px 14px; font-size:14px; color:var(--text); outline:none; font-family:inherit; resize:vertical;"
-            onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--gold-border)'"></textarea>
-        </div>
-        <div style="display:flex; align-items:center; gap:1rem; flex-wrap:wrap;">
-          <button type="submit" class="btn-gold" style="font-size:14px; padding:12px 28px;" id="submit-btn">
-            Nachricht senden
-          </button>
-          <span id="form-status" style="font-size:13px; color:var(--muted);"></span>
-        </div>
+    <div style="max-width:560px; display:flex; flex-direction:column; gap:12px;" id="contact-form">
+      <div>
+        <label style="font-size:12px; color:var(--muted); letter-spacing:0.06em; text-transform:uppercase; display:block; margin-bottom:6px;">Name</label>
+        <input type="text" id="cf-name" placeholder="Max Mustermann"
+          style="width:100%; background:var(--card); border:0.5px solid var(--gold-border); border-radius:8px; padding:12px 14px; font-size:14px; color:var(--text); outline:none; font-family:inherit;"
+          onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--gold-border)'">
       </div>
-    </form>
+      <div>
+        <label style="font-size:12px; color:var(--muted); letter-spacing:0.06em; text-transform:uppercase; display:block; margin-bottom:6px;">Betreff</label>
+        <select id="cf-betreff"
+          style="width:100%; background:var(--card); border:0.5px solid var(--gold-border); border-radius:8px; padding:12px 14px; font-size:14px; color:var(--muted); outline:none; font-family:inherit; cursor:pointer;"
+          onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--gold-border)'">
+          <option value="Allgemeine Anfrage">Allgemeine Anfrage</option>
+          <option value="Vereinspaket anfragen">Vereinspaket anfragen</option>
+          <option value="Feedback zur App">Feedback zur App</option>
+          <option value="Technisches Problem">Technisches Problem</option>
+          <option value="Premium / Abrechnung">Premium / Abrechnung</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:12px; color:var(--muted); letter-spacing:0.06em; text-transform:uppercase; display:block; margin-bottom:6px;">Nachricht</label>
+        <textarea id="cf-nachricht" rows="5" placeholder="Deine Nachricht..."
+          style="width:100%; background:var(--card); border:0.5px solid var(--gold-border); border-radius:8px; padding:12px 14px; font-size:14px; color:var(--text); outline:none; font-family:inherit; resize:vertical;"
+          onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--gold-border)'"></textarea>
+      </div>
+      <div>
+        <button onclick="sendMail()" class="btn-gold" style="font-size:14px; padding:12px 28px;">
+          Nachricht senden
+        </button>
+      </div>
+    </div>
+
+    <script>
+    function sendMail() {
+      var name = document.getElementById('cf-name').value || 'Unbekannt';
+      var betreff = document.getElementById('cf-betreff').value;
+      var nachricht = document.getElementById('cf-nachricht').value;
+      var body = 'Name: ' + name + '%0A%0A' + nachricht;
+      window.location.href = 'mailto:hallo@scheibenklar.app?subject=' + encodeURIComponent(betreff) + '&body=' + encodeURIComponent('Name: ' + name + '\n\n' + nachricht);
+    }
+    </script>
 
     <p style="margin-top:1.5rem; font-size:13px; color:var(--muted);">
       Oder direkt per E-Mail: <a href="mailto:hallo@scheibenklar.app">hallo@scheibenklar.app</a>
@@ -697,43 +698,7 @@
   </div>
 </section>
 
-<script>
-(function() {
-  const form = document.getElementById('contact-form');
-  const status = document.getElementById('form-status');
-  const btn = document.getElementById('submit-btn');
-  if (!form) return;
 
-  form.addEventListener('submit', async function(e) {
-    e.preventDefault();
-    btn.textContent = 'Wird gesendet...';
-    btn.disabled = true;
-
-    const data = new FormData(form);
-    try {
-      const res = await fetch(form.action, {
-        method: 'POST',
-        body: data,
-        headers: { 'Accept': 'application/json' }
-      });
-      if (res.ok) {
-        status.textContent = '✓ Nachricht gesendet — wir melden uns bald!';
-        status.style.color = 'var(--gold)';
-        form.reset();
-        btn.textContent = 'Nachricht senden';
-        btn.disabled = false;
-      } else {
-        throw new Error();
-      }
-    } catch {
-      status.textContent = 'Fehler beim Senden. Bitte per E-Mail schreiben.';
-      status.style.color = '#c0392b';
-      btn.textContent = 'Nachricht senden';
-      btn.disabled = false;
-    }
-  });
-})();
-</script>
 
 <!-- FOOTER -->
 <footer>
