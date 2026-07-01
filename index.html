@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="scheibenklar – Der digitale Begleiter für deutsche Sportschützen. DSGVO-konform, Local-First, werbefrei.">
+<meta property="og:title" content="scheibenklar – Digitaler Schützenbegleiter">
+<meta property="og:description" content="KI-Trefferauswertung, digitales Schießbuch §14, Fristen-Tracker und mehr. 4 Module dauerhaft kostenlos.">
+<meta property="og:url" content="https://scheibenklar.app">
+<title>scheibenklar – Der digitale Begleiter für Sportschützen</title>
+<style>
+  :root {
+    --night: #0D1B2A;
+    --gold: #C9A84C;
+    --gold-l: #E8CC7A;
+    --gold-dim: rgba(201,168,76,0.12);
+    --gold-border: rgba(201,168,76,0.22);
+    --card: rgba(255,255,255,0.04);
+    --text: #F0EDE6;
+    --muted: #8A8478;
+    --r: 12px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background: var(--night);
+    color: var(--text);
+    overflow-x: hidden;
+    cursor: none;
+  }
+  a { color: var(--gold); text-decoration: none; }
+  a:hover { color: var(--gold-l); }
+
+  /* CANVAS */
+  #bg-canvas, #cursor-canvas {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+  #cursor-canvas { z-index: 9999; }
+
+  /* LAYOUT */
+  .page { position: relative; z-index: 1; }
+  .container { max-width: 1080px; margin: 0 auto; padding: 0 2rem; }
+  hr.div { border: none; border-top: 0.5px solid var(--gold-border); }
+  .section { padding: 5rem 0; }
+  .sec-eye { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.5rem; }
+  .sec-title { font-size: clamp(22px, 3vw, 30px); font-weight: 500; margin-bottom: 0.5rem; }
+  .sec-sub { font-size: 15px; color: var(--muted); line-height: 1.65; max-width: 560px; margin-bottom: 2.5rem; }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(13,27,42,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 0.5px solid var(--gold-border);
+    padding: 0.9rem 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-logo { display: flex; align-items: center; gap: 10px; }
+  .nav-logo svg { width: 28px; height: 28px; }
+  .nav-logo-text { font-size: 16px; font-weight: 500; color: var(--gold); letter-spacing: 0.05em; }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a { font-size: 13px; color: var(--muted); transition: color 0.15s; }
+  .nav-links a:hover { color: var(--gold); }
+  .nav-cta {
+    background: var(--gold); color: var(--night);
+    font-size: 13px; font-weight: 600;
+    padding: 8px 20px; border-radius: 8px; border: none; cursor: none;
+    transition: background 0.15s;
+  }
+  .nav-cta:hover { background: var(--gold-l); }
+
+  /* HERO */
+  .hero {
+    min-height: 92vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center;
+    padding: 6rem 2rem 4rem;
+  }
+  .hero-eyebrow {
+    font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 1.5rem;
+  }
+  .hero-eyebrow span { opacity: 0.5; margin: 0 8px; }
+  .hero-title {
+    font-size: clamp(48px, 8vw, 88px);
+    font-weight: 700; letter-spacing: -0.02em;
+    line-height: 1; margin-bottom: 1.25rem;
+    color: var(--text);
+  }
+  .hero-sub {
+    font-size: clamp(15px, 2vw, 18px);
+    color: var(--muted); max-width: 520px;
+    line-height: 1.65; margin-bottom: 3rem;
+  }
+  .hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 4rem; }
+  .btn-gold {
+    background: var(--gold); color: var(--night);
+    font-size: 15px; font-weight: 600;
+    padding: 14px 32px; border-radius: 9px; border: none; cursor: none;
+    transition: background 0.15s;
+  }
+  .btn-gold:hover { background: var(--gold-l); }
+  .btn-outline {
+    background: transparent; color: var(--gold);
+    font-size: 15px; font-weight: 500;
+    padding: 14px 32px; border-radius: 9px;
+    border: 1px solid var(--gold-border); cursor: none;
+    transition: border-color 0.15s;
+  }
+  .btn-outline:hover { border-color: var(--gold); }
+
+  /* STATS */
+  .hero-stats { display: flex; gap: 3rem; justify-content: center; flex-wrap: wrap; }
+  .stat-item { text-align: center; }
+  .stat-num { font-size: 32px; font-weight: 600; color: var(--gold); line-height: 1; }
+  .stat-label { font-size: 12px; color: var(--muted); margin-top: 4px; max-width: 120px; line-height: 1.4; }
+
+  /* MODULE GRID */
+  .mod-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+  .mod-card {
+    background: var(--card);
+    border: 0.5px solid var(--gold-border);
+    border-radius: var(--r);
+    padding: 1.5rem;
+    transition: border-color 0.2s, background 0.2s;
+    position: relative;
+  }
+  .mod-card:hover { border-color: var(--gold); background: rgba(201,168,76,0.06); }
+  .mod-badge {
+    display: inline-block;
+    font-size: 10px; font-weight: 600; letter-spacing: 0.06em;
+    padding: 3px 8px; border-radius: 4px;
+    margin-bottom: 1rem;
+  }
+  .badge-free { background: rgba(201,168,76,0.15); color: var(--gold); }
+  .badge-premium { background: rgba(255,255,255,0.07); color: var(--muted); }
+  .mod-card h3 { font-size: 14px; font-weight: 500; margin-bottom: 6px; }
+  .mod-card p { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+  /* VERGLEICH */
+  .compare-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .compare-table th {
+    text-align: left; padding: 12px 16px;
+    font-size: 12px; font-weight: 500; color: var(--muted);
+    border-bottom: 0.5px solid var(--gold-border);
+  }
+  .compare-table th.highlight { color: var(--gold); }
+  .compare-table td {
+    padding: 12px 16px;
+    border-bottom: 0.5px solid rgba(255,255,255,0.04);
+    color: var(--muted);
+    vertical-align: top;
+  }
+  .compare-table td.highlight { color: var(--text); }
+  .compare-table tr:last-child td { border-bottom: none; }
+  .compare-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .chk { color: var(--gold); }
+  .cross { color: #444; }
+
+  /* ZEITERSPARNIS */
+  .time-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .time-card {
+    background: var(--card);
+    border: 0.5px solid var(--gold-border);
+    border-radius: var(--r);
+    padding: 1.5rem;
+  }
+  .time-card.featured { border-color: var(--gold); background: rgba(201,168,76,0.05); }
+  .time-card h4 { font-size: 13px; color: var(--muted); margin-bottom: 0.75rem; font-weight: 400; }
+  .time-card .time-num { font-size: 28px; font-weight: 600; color: var(--gold); margin-bottom: 4px; }
+  .time-card p { font-size: 13px; color: var(--muted); line-height: 1.5; }
+  .time-rows { display: flex; flex-direction: column; gap: 10px; }
+  .time-row {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 10px 16px;
+    background: var(--card);
+    border: 0.5px solid var(--gold-border);
+    border-radius: 8px;
+    font-size: 13px;
+    gap: 1rem;
+  }
+  .time-row-label { color: var(--muted); flex: 1; }
+  .time-row-before { color: #664; white-space: nowrap; font-size: 12px; }
+  .time-row-after { color: var(--gold); white-space: nowrap; font-size: 12px; font-weight: 600; }
+
+  /* PREISE */
+  .price-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .price-card {
+    background: var(--card);
+    border: 0.5px solid var(--gold-border);
+    border-radius: var(--r);
+    padding: 1.75rem 1.5rem;
+    display: flex; flex-direction: column; gap: 1.25rem;
+  }
+  .price-card.featured { border: 1.5px solid var(--gold); }
+  .price-tag {
+    display: inline-block;
+    background: var(--gold); color: var(--night);
+    font-size: 10px; font-weight: 700; letter-spacing: 0.06em;
+    padding: 3px 10px; border-radius: 4px;
+  }
+  .price-name { font-size: 18px; font-weight: 500; }
+  .price-amt { font-size: 34px; font-weight: 600; color: var(--gold); line-height: 1; }
+  .price-amt small { font-size: 14px; color: var(--muted); font-weight: 400; }
+  .price-hint { font-size: 12px; color: var(--muted); }
+  .price-ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .price-ul li { font-size: 13px; color: var(--muted); display: flex; gap: 8px; line-height: 1.4; }
+  .price-ul li b { color: var(--text); font-weight: 400; }
+  .price-btn {
+    margin-top: auto; padding: 12px;
+    border-radius: 8px; font-size: 14px; font-weight: 600;
+    cursor: none; border: none; text-align: center;
+    display: block; transition: background 0.15s, border-color 0.15s;
+  }
+  .price-btn-gold { background: var(--gold); color: var(--night); }
+  .price-btn-gold:hover { background: var(--gold-l); }
+  .price-btn-out { background: transparent; color: var(--gold); border: 1px solid var(--gold-border); }
+  .price-btn-out:hover { border-color: var(--gold); }
+
+  /* GARANTIEN */
+  .guarantees { display: flex; gap: 2rem; flex-wrap: wrap; justify-content: center; margin-top: 2.5rem; }
+  .guarantee { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
+  .guarantee-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); flex-shrink: 0; }
+
+  /* START */
+  .steps { display: flex; gap: 2rem; flex-wrap: wrap; }
+  .step { flex: 1; min-width: 200px; display: flex; gap: 1rem; align-items: flex-start; }
+  .step-num {
+    width: 32px; height: 32px; border-radius: 50%;
+    border: 1px solid var(--gold-border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; color: var(--gold); flex-shrink: 0;
+  }
+  .step h3 { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
+  .step p { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+  /* TRUST */
+  .trust-bar {
+    display: flex; gap: 2rem; flex-wrap: wrap;
+    justify-content: center; padding: 2rem 0;
+    border-top: 0.5px solid var(--gold-border);
+    border-bottom: 0.5px solid var(--gold-border);
+  }
+  .trust-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
+  .trust-dot { color: var(--gold); font-size: 16px; }
+
+  /* CTA SECTION */
+  .cta-section {
+    text-align: center; padding: 5rem 2rem;
+    background: linear-gradient(to bottom, transparent, rgba(201,168,76,0.04), transparent);
+  }
+  .cta-section h2 { font-size: clamp(24px, 4vw, 38px); font-weight: 500; margin-bottom: 1rem; }
+  .cta-section p { font-size: 16px; color: var(--muted); margin-bottom: 2.5rem; }
+
+  /* FOOTER */
+  footer {
+    padding: 2rem;
+    border-top: 0.5px solid var(--gold-border);
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
+  }
+  .footer-left { font-size: 12px; color: var(--muted); line-height: 1.6; }
+  .footer-links { display: flex; gap: 1.5rem; }
+  .footer-links a { font-size: 12px; color: var(--muted); }
+  .footer-links a:hover { color: var(--gold); }
+
+  @media (max-width: 700px) {
+    .nav-links { display: none; }
+    .price-grid { grid-template-columns: 1fr; }
+    .time-grid { grid-template-columns: 1fr; }
+    .compare-table { font-size: 12px; }
+    .compare-table th, .compare-table td { padding: 8px 10px; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+<canvas id="cursor-canvas"></canvas>
+
+<div class="page">
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="14" cy="14" r="13" stroke="#C9A84C" stroke-width="1.2"/>
+      <circle cx="14" cy="14" r="8.5" stroke="#C9A84C" stroke-width="0.7" stroke-dasharray="2 2"/>
+      <circle cx="14" cy="14" r="4" stroke="#C9A84C" stroke-width="0.7"/>
+      <circle cx="14" cy="14" r="1.6" fill="#C9A84C"/>
+      <line x1="14" y1="0" x2="14" y2="4.5" stroke="#C9A84C" stroke-width="0.8"/>
+      <line x1="14" y1="23.5" x2="14" y2="28" stroke="#C9A84C" stroke-width="0.8"/>
+      <line x1="0" y1="14" x2="4.5" y2="14" stroke="#C9A84C" stroke-width="0.8"/>
+      <line x1="23.5" y1="14" x2="28" y2="14" stroke="#C9A84C" stroke-width="0.8"/>
+    </svg>
+    <span class="nav-logo-text">scheibenklar</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#module">Module</a></li>
+    <li><a href="#vergleich">Vergleich</a></li>
+    <li><a href="#preise">Preise</a></li>
+    <li><a href="#start">Start</a></li>
+  </ul>
+  <button class="nav-cta" onclick="window.open('https://scheibenklar.app','_blank')">App öffnen</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <p class="hero-eyebrow">Digital <span>·</span> DSGVO-konform <span>·</span> Local-First</p>
+  <h1 class="hero-title">scheibenklar</h1>
+  <p class="hero-sub">Der digitale Begleiter für deutsche Sportschützen — KI-gestützte Trefferanalyse, §14-konformes Schießbuch und mehr. Deine Daten bleiben auf deinem Gerät.</p>
+  <div class="hero-btns">
+    <button class="btn-gold" onclick="window.open('https://scheibenklar.app','_blank')">Kostenlos starten</button>
+    <button class="btn-outline" onclick="document.getElementById('module').scrollIntoView({behavior:'smooth'})">Module entdecken ↓</button>
+  </div>
+  <div class="hero-stats">
+    <div class="stat-item">
+      <div class="stat-num">100%</div>
+      <div class="stat-label">Daten bleiben auf deinem Gerät</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">4/9</div>
+      <div class="stat-label">Module dauerhaft kostenlos</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">§14</div>
+      <div class="stat-label">WaffG-konformes digitales Schießbuch</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">~5h</div>
+      <div class="stat-label">Zeitersparnis pro Jahr</div>
+    </div>
+  </div>
+</section>
+
+<hr class="div">
+
+<!-- MODULE -->
+<section class="section" id="module">
+  <div class="container">
+    <div class="sec-eye">Funktionsumfang</div>
+    <div class="sec-title">Alles, was dein Schießsport-Alltag braucht</div>
+    <p class="sec-sub">Von der gesetzlich vorgeschriebenen Dokumentation bis zur KI-gestützten Trefferanalyse — neun Module, ein System, keine Zettelwirtschaft.</p>
+    <div class="mod-grid">
+      <div class="mod-card">
+        <span class="mod-badge badge-free">KOSTENLOS</span>
+        <h3>Scheibenauswertung</h3>
+        <p>Zielscheibe abfotografieren, KI wertet Ringe und Trefferbild automatisch aus – offline nutzbar.</p>
+      </div>
+      <div class="mod-card">
+        <span class="mod-badge badge-free">KOSTENLOS</span>
+        <h3>Schießbuch §14</h3>
+        <p>Rechtskonformer digitaler Nachweis nach Waffengesetz – jederzeit griffbereit statt im Schrank.</p>
+      </div>
+      <div class="mod-card">
+        <span class="mod-badge badge-free">KOSTENLOS</span>
+        <h3>Fristen-Tracker</h3>
+        <p>Behörden-Fristen und Aufbewahrungspflichten im Blick, bevor sie kritisch werden.</p>
+      </div>
+      <div class="mod-card">
+        <span class="mod-badge badge-free">KOSTENLOS</span>
+        <h3>News & Recht</h3>
+        <p>Aktuelle Meldungen zu DSB und Waffenrecht, kompakt aufbereitet.</p>
+      </div>
+      <div class="mod-card">
+        <span class="mod-badge badge-premium">PREMIUM</span>
+        <h3>WBK-Verwaltung</h3>
+        <p>Alle Waffenbesitzkarten mit Typ, Fristen und Waffen-Zuordnung auf einen Blick, inkl. Foto-Ablage.</p>
+      </div>
+      <div class="mod-card">
+        <span class="mod-badge badge-premium">PREMIUM</span>
+        <h3>Mein Waffenarsenal</h3>
+        <p>Zentrale Waffenverwaltung mit Kaliber, Distanzen und automatischem DSB-Disziplin-Vorschlag.</p>
+      </div>
+      <div class="mod-card">
+        <span class="mod-badge badge-premium">PREMIUM</span>
+        <h3>Munitionsverbrauch</h3>
+        <p>Verbrauch automatisch aus dem Schießbuch berechnet, Bestand pro Kaliber immer aktuell.</p>
+      </div>
+      <div class="mod-card">
+        <span class="mod-badge badge-premium">PREMIUM</span>
+        <h3>KI-Trendanalyse</h3>
+        <p>Langzeit-Coaching auf Basis deiner Trainingshistorie – erkennt Entwicklung, nicht nur Momentaufnahmen.</p>
+      </div>
+      <div class="mod-card">
+        <span class="mod-badge badge-premium">PREMIUM</span>
+        <h3>Profi-Tools</h3>
+        <p>Wettkampfvorbereitung, Ausrüstungs-Checklisten und Trainingsstatistiken auf Wettkampf-Niveau.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="div">
+
+<!-- VERGLEICH -->
+<section class="section" id="vergleich">
+  <div class="container">
+    <div class="sec-eye">Marktvergleich</div>
+    <div class="sec-title">Wie schneidet scheibenklar ab?</div>
+    <p class="sec-sub">Ein direkter Vergleich mit den etablierten Schießbuch-Apps im deutschsprachigen Raum.</p>
+    <div style="overflow-x:auto; border: 0.5px solid var(--gold-border); border-radius: var(--r);">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Kriterium</th>
+            <th class="highlight">scheibenklar</th>
+            <th>Anbieter A &#128211;</th>
+            <th>Anbieter B &#11044;</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Datenspeicherung</td>
+            <td class="highlight"><span class="chk">✓</span> Local-First, auf dem Gerät</td>
+            <td>Cloud-Account nötig</td>
+            <td>Cloud-Account nötig</td>
+          </tr>
+          <tr>
+            <td>Kostenloser Umfang</td>
+            <td class="highlight"><span class="chk">✓</span> 4 volle Module, unbegrenzt</td>
+            <td>10 Einträge / 2 Waffen</td>
+            <td>Basisfunktionen, Social-Feed</td>
+          </tr>
+          <tr>
+            <td>§14-Schießbuch</td>
+            <td class="highlight"><span class="chk">✓</span> Ja</td>
+            <td><span class="chk">✓</span> Ja</td>
+            <td><span class="chk">✓</span> Ja</td>
+          </tr>
+          <tr>
+            <td>WBK-Fristenverwaltung</td>
+            <td class="highlight"><span class="chk">✓</span> Ja, mit Foto-Ablage</td>
+            <td><span class="cross">–</span> Nein</td>
+            <td><span class="cross">–</span> Nein</td>
+          </tr>
+          <tr>
+            <td>KI-Trefferauswertung</td>
+            <td class="highlight"><span class="chk">✓</span> Ja, per Kamera</td>
+            <td><span class="cross">–</span> Nein</td>
+            <td>Ringauswertung, ohne KI-Coaching</td>
+          </tr>
+          <tr>
+            <td>KI-Trendanalyse</td>
+            <td class="highlight"><span class="chk">✓</span> Ja (Premium)</td>
+            <td><span class="cross">–</span> Nein</td>
+            <td><span class="cross">–</span> Nein</td>
+          </tr>
+          <tr>
+            <td>Werbung / Social-Feed</td>
+            <td class="highlight"><span class="chk">✓</span> Keine</td>
+            <td>Keine</td>
+            <td>Social-„Stammtisch"-Feed</td>
+          </tr>
+          <tr>
+            <td>Vereinslösung</td>
+            <td class="highlight"><span class="chk">✓</span> Ja, 200 €/Jahr</td>
+            <td><span class="cross">–</span> Nein</td>
+            <td><span class="cross">–</span> Nein</td>
+          </tr>
+          <tr>
+            <td>Einstieg Premium</td>
+            <td class="highlight">5 €/Monat</td>
+            <td>ab 1,99 €/3 Monate</td>
+            <td>Abo, Preis variabel</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:12px; color: var(--muted); margin-top: 1rem; line-height: 1.6;">
+      Der entscheidende Unterschied: Wettbewerber verlangen einen Cloud-Account, sobald du über die Basisfunktionen hinausgehst. scheibenklar bleibt lokal – auch im Premium-Modus bestimmst du, was dein Gerät verlässt.
+    </p>
+    <p style="font-size:11px; color: var(--muted); margin-top: 0.75rem; opacity: 0.7; line-height: 1.6;">
+      Vergleich mit zwei repräsentativen Anbietern im deutschsprachigen Markt. Angaben basieren auf öffentlich zugänglichen Store- und Webseiten-Informationen zum Zeitpunkt der Recherche. Produktnamen sind Eigentum der jeweiligen Inhaber. Funktionsumfang kann sich durch Updates ändern.
+    </p>
+  </div>
+</section>
+
+<hr class="div">
+
+<!-- ZEITERSPARNIS -->
+<section class="section">
+  <div class="container">
+    <div class="sec-eye">Kosten-Nutzen</div>
+    <div class="sec-title">Was scheibenklar dir tatsächlich spart</div>
+    <p class="sec-sub">Zeit ist der Faktor, den Schützen am meisten unterschätzen – bis sie ihn digital zurückbekommen.</p>
+
+    <div class="time-rows" style="margin-bottom: 2rem;">
+      <div class="time-row">
+        <span class="time-row-label">Trefferbild manuell auszählen & ins Papier-Schießbuch übertragen</span>
+        <span class="time-row-before">~ 8–10 Min. / Einheit</span>
+        <span class="time-row-after">→ 30 Sek.</span>
+      </div>
+      <div class="time-row">
+        <span class="time-row-label">WBK-Fristen manuell im Kalender nachhalten</span>
+        <span class="time-row-before">~ 15 Min. / Quartal</span>
+        <span class="time-row-after">→ 0 Min.</span>
+      </div>
+      <div class="time-row">
+        <span class="time-row-label">Munitionsbestand manuell in Excel pflegen</span>
+        <span class="time-row-before">~ 10 Min. / Monat</span>
+        <span class="time-row-after">→ 0 Min.</span>
+      </div>
+    </div>
+
+    <div class="time-grid">
+      <div class="time-card featured">
+        <h4>Geschätzte Zeitersparnis pro Jahr</h4>
+        <div class="time-num">~5 Stunden</div>
+        <p>Für einen Schützen mit wöchentlichem Training — allein durch den Wegfall manueller Auszählung, Übertragung und Fristenkontrolle. Zeit, die auf dem Stand bleibt statt am Schreibtisch.</p>
+      </div>
+      <div class="time-card">
+        <h4>Was kostet die Alternative?</h4>
+        <p style="margin-bottom: 1rem;">Papier-Schießbuch + separate Waffenverwaltung + Excel-Munitionsliste + Kalender-Erinnerung: vier Werkzeuge, vier Systembrüche, volle Fehleranfälligkeit bei Behördenprüfungen.</p>
+        <p>scheibenklar Premium ersetzt alle vier für <strong style="color: var(--gold);">5 € im Monat</strong> – weniger als ein Kaffee auf dem Weg zum Stand.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="div">
+
+<!-- PREISE -->
+<section class="section" id="preise">
+  <div class="container">
+    <div class="sec-eye">Tarife</div>
+    <div class="sec-title">Transparent. Fair. Ohne Bindung.</div>
+    <p class="sec-sub">Jederzeit kündbar, keine versteckten Kosten, keine In-App-Käufe für einzelne Funktionen.</p>
+
+    <div class="price-grid">
+      <div class="price-card">
+        <div>
+          <div class="price-name">Free</div>
+          <div class="price-amt">0 € <small>/ dauerhaft</small></div>
+        </div>
+        <ul class="price-ul">
+          <li><span class="chk">✓</span> <span>Scheibenauswertung mit KI</span></li>
+          <li><span class="chk">✓</span> <span>Digitales Schießbuch §14</span></li>
+          <li><span class="chk">✓</span> <span>Fristen-Tracker (1 WBK)</span></li>
+          <li><span class="chk">✓</span> <span>News & Recht</span></li>
+          <li><span class="chk">✓</span> <span>Keine Werbung, kein Zeitlimit</span></li>
+        </ul>
+        <a href="https://scheibenklar.app" target="_blank" class="price-btn price-btn-out">Kostenlos starten</a>
+      </div>
+
+      <div class="price-card featured">
+        <div>
+          <div style="margin-bottom: 8px;"><span class="price-tag">MEISTGEWÄHLT</span></div>
+          <div class="price-name">Premium</div>
+          <div class="price-amt">5 € <small>/ Monat</small></div>
+          <div class="price-hint">= 1,6 Cent pro Tag</div>
+        </div>
+        <ul class="price-ul">
+          <li><span class="chk">✓</span> <span>Alles aus Free</span></li>
+          <li><span class="chk">✓</span> <span>WBK-Verwaltung inkl. Foto-Ablage</span></li>
+          <li><span class="chk">✓</span> <span>Waffenarsenal mit DSB-Vorschlag</span></li>
+          <li><span class="chk">✓</span> <span>Munitionsverbrauch-Tracker</span></li>
+          <li><span class="chk">✓</span> <span>KI-Langzeit-Trendanalyse</span></li>
+          <li><span class="chk">✓</span> <span>Schussbuch-Export als PDF</span></li>
+          <li><span class="chk">✓</span> <span>Jederzeit kündbar</span></li>
+        </ul>
+        <a href="https://buy.stripe.com/28EcMY2FX3aJ1K42X063K00" target="_blank" class="price-btn price-btn-gold">Jetzt upgraden</a>
+      </div>
+
+      <div class="price-card">
+        <div>
+          <div class="price-name">Vereinspaket</div>
+          <div class="price-amt">200 € <small>/ Jahr</small></div>
+        </div>
+        <ul class="price-ul">
+          <li><span class="chk">✓</span> <span>Alles aus Premium</span></li>
+          <li><span class="chk">✓</span> <span>Mehrbenutzer-Zugriff für den Verein</span></li>
+          <li><span class="chk">✓</span> <span>Fördermittel-Finder</span></li>
+          <li><span class="chk">✓</span> <span>Wettkampfplaner mit Rangliste</span></li>
+          <li><span class="chk">✓</span> <span>Protokoll-Vorlagen für MV & Vorstand</span></li>
+          <li><span class="chk">✓</span> <span>Wartungs- & Prüffristen §27a WaffG</span></li>
+        </ul>
+        <a href="https://buy.stripe.com/28EcMY0xP7qZbkEcxA63K01" target="_blank" class="price-btn price-btn-out">Vereinspaket sichern</a>
+      </div>
+    </div>
+
+    <div class="guarantees">
+      <div class="guarantee"><div class="guarantee-dot"></div>Monatlich kündbar</div>
+      <div class="guarantee"><div class="guarantee-dot"></div>Keine Mindestlaufzeit</div>
+      <div class="guarantee"><div class="guarantee-dot"></div>Gemäß §19 UStG keine USt.</div>
+      <div class="guarantee"><div class="guarantee-dot"></div>Zahlung über Stripe</div>
+    </div>
+  </div>
+</section>
+
+<hr class="div">
+
+<!-- TRUST -->
+<div class="container">
+  <div class="trust-bar">
+    <div class="trust-item"><span class="trust-dot">◉</span> Local-First, kein Tracking</div>
+    <div class="trust-item"><span class="trust-dot">◉</span> Für iOS & Android, ohne App Store</div>
+    <div class="trust-item"><span class="trust-dot">◉</span> DSGVO-konform & werbefrei</div>
+    <div class="trust-item"><span class="trust-dot">◉</span> Entwickelt & gehostet in Deutschland</div>
+    <div class="trust-item"><span class="trust-dot">◉</span> Kein Account nötig für den Start</div>
+  </div>
+</div>
+
+<!-- CTA -->
+<section class="cta-section" id="start">
+  <div class="container">
+    <h2>Bereit für den digitalen Schießstand?</h2>
+    <p>scheibenklar läuft direkt im Browser — auf iOS und Android, ohne App-Store-Download, ohne Installationshürde.</p>
+    <div class="steps" style="margin-bottom: 3rem; text-align: left; max-width: 600px; margin-left: auto; margin-right: auto;">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div>
+          <h3>Browser öffnen</h3>
+          <p>scheibenklar.app im Browser aufrufen</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div>
+          <h3>Zum Home-Bildschirm</h3>
+          <p>Als App hinzufügen (Android & iOS)</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div>
+          <h3>Sofort loslegen</h3>
+          <p>Kein Account nötig für den Start</p>
+        </div>
+      </div>
+    </div>
+    <button class="btn-gold" style="font-size: 16px; padding: 16px 40px;" onclick="window.open('https://scheibenklar.app','_blank')">Jetzt kostenlos starten</button>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    scheibenklar · © 2026 Sebastian Deutrich<br>
+    Entwickelt von Schützen für Schützen · DSGVO-konform · werbefrei · Local-First
+  </div>
+  <div class="footer-links">
+    <a href="/datenschutz.html">Datenschutz</a>
+    <a href="/impressum.html">Impressum</a>
+    <a href="mailto:sdeutrich@googlemail.com">Kontakt</a>
+    <a href="https://scheibenklar.app" target="_blank">App öffnen</a>
+  </div>
+</footer>
+
+</div><!-- /page -->
+
+<script>
+(function() {
+  const bgCanvas = document.getElementById('bg-canvas');
+  const crCanvas = document.getElementById('cursor-canvas');
+  const bgCtx = bgCanvas.getContext('2d');
+  const crCtx = crCanvas.getContext('2d');
+  const GOLD = 'rgba(201,168,76,';
+
+  function resize() {
+    bgCanvas.width = window.innerWidth;
+    bgCanvas.height = window.innerHeight;
+    crCanvas.width = window.innerWidth;
+    crCanvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // Pulsing rings - centered upper area
+  const MAX_R = Math.max(window.innerWidth, window.innerHeight) * 0.9;
+  const NUM_RINGS = 6;
+  const rings = Array.from({length: NUM_RINGS}, (_, i) => ({
+    phase: (i / NUM_RINGS) * Math.PI * 2,
+    speed: 0.15 + i * 0.03
+  }));
+  let t = 0;
+
+  function drawBg() {
+    bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+    const cx = bgCanvas.width / 2;
+    const cy = bgCanvas.height * 0.3;
+
+    rings.forEach(ring => {
+      const progress = ((t * ring.speed + ring.phase) % (Math.PI * 2)) / (Math.PI * 2);
+      const r = progress * MAX_R;
+      const alpha = (1 - progress) * 0.15;
+      bgCtx.beginPath();
+      bgCtx.arc(cx, cy, r, 0, Math.PI * 2);
+      bgCtx.strokeStyle = GOLD + alpha + ')';
+      bgCtx.lineWidth = 1;
+      bgCtx.stroke();
+    });
+
+    // Static subtle rings
+    [0.05, 0.12, 0.22, 0.38].forEach(f => {
+      bgCtx.beginPath();
+      bgCtx.arc(cx, cy, MAX_R * f, 0, Math.PI * 2);
+      bgCtx.strokeStyle = GOLD + '0.06)';
+      bgCtx.lineWidth = 0.6;
+      bgCtx.stroke();
+    });
+
+    t += 0.01;
+  }
+
+  // Cursor
+  let mx = -500, my = -500;
+  const trails = [];
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    trails.push({x: mx, y: my, r: 0, a: 0.5});
+    if (trails.length > 4) trails.shift();
+  });
+
+  function drawCursor() {
+    crCtx.clearRect(0, 0, crCanvas.width, crCanvas.height);
+
+    // Trails
+    trails.forEach(tr => {
+      tr.r += 0.8; tr.a *= 0.93;
+      if (tr.a < 0.01) return;
+      crCtx.beginPath();
+      crCtx.arc(tr.x, tr.y, tr.r + 8, 0, Math.PI * 2);
+      crCtx.strokeStyle = GOLD + (tr.a * 0.35) + ')';
+      crCtx.lineWidth = 0.7;
+      crCtx.stroke();
+    });
+
+    // Crosshair rings
+    [[12, 0.7], [20, 0.4], [30, 0.2]].forEach(([r, a]) => {
+      crCtx.beginPath();
+      crCtx.arc(mx, my, r, 0, Math.PI * 2);
+      crCtx.strokeStyle = GOLD + a + ')';
+      crCtx.lineWidth = r === 12 ? 1.2 : 0.7;
+      crCtx.stroke();
+    });
+
+    // Crosshair lines
+    crCtx.strokeStyle = GOLD + '0.6)';
+    crCtx.lineWidth = 1;
+    const gap = 5, arm = 9;
+    [[mx - gap - arm, my, mx - gap, my],
+     [mx + gap, my, mx + gap + arm, my],
+     [mx, my - gap - arm, mx, my - gap],
+     [mx, my + gap, mx, my + gap + arm]].forEach(([x1,y1,x2,y2]) => {
+      crCtx.beginPath(); crCtx.moveTo(x1,y1); crCtx.lineTo(x2,y2); crCtx.stroke();
+    });
+  }
+
+  function loop() {
+    drawBg();
+    drawCursor();
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+</script>
+</body>
+</html>
