@@ -63,6 +63,10 @@
   }
   .nav-logo { display: flex; align-items: center; gap: 10px; }
   .nav-logo svg { width: 28px; height: 28px; }
+  .nav-logo img {
+    width: 52px; height: 52px; object-fit: contain; display: block;
+    border-radius: 50%; border: 1px solid var(--gold);
+  }
   .nav-logo-text { font-size: 16px; font-weight: 500; color: var(--gold); letter-spacing: 0.05em; }
   .nav-links { display: flex; gap: 2rem; list-style: none; }
   .nav-links a { font-size: 13px; color: var(--muted); transition: color 0.15s; }
@@ -278,6 +282,9 @@
     .compare-table { font-size: 12px; }
     .compare-table th, .compare-table td { padding: 8px 10px; }
   }
+  @media (max-width: 390px) {
+    .nav-logo img { width: 40px; height: 40px; }
+  }
 </style>
 </head>
 <body>
@@ -290,7 +297,7 @@
 <!-- NAV -->
 <nav>
   <div class="nav-logo">
-    <img src="/logo-scheibenklar.png" alt="scheibenklar Logo" width="28" height="28" style="width:28px;height:28px;object-fit:contain;display:block;">
+    <img src="/logo-scheibenklar.png" alt="scheibenklar Logo" width="52" height="52">
     <span class="nav-logo-text">scheibenklar</span>
   </div>
   <ul class="nav-links">
