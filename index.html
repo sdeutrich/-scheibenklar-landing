@@ -723,6 +723,9 @@
   const bgCtx = bgCanvas.getContext('2d');
   const crCtx = crCanvas.getContext('2d');
   const GOLD = 'rgba(201,168,76,';
+  const CHECK_PATH = new Path2D('M4 12.5 L10 18.5 L20 6');
+  const INTERACTIVE_SELECTOR = 'a, button, [role="button"], input[type="submit"], input[type="button"], label, summary, .cta, [onclick]';
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   function resize() {
     bgCanvas.width = window.innerWidth;
@@ -774,14 +777,39 @@
   let mx = -500, my = -500;
   const trails = [];
 
+  // Fadenkreuz <-> Häkchen: morph 0 = Fadenkreuz, 1 = Häkchen (Logo-Symbol)
+  let hoverTarget = 0;
+  let morph = 0;
+  let pulseT = 0;
+  let popStart = -Infinity;
+  const ripples = [];
+
   document.addEventListener('mousemove', e => {
     mx = e.clientX; my = e.clientY;
-    trails.push({x: mx, y: my, r: 0, a: 0.5});
-    if (trails.length > 4) trails.shift();
+    const overInteractive = !!e.target.closest(INTERACTIVE_SELECTOR);
+    hoverTarget = overInteractive ? 1 : 0;
+    if (!overInteractive) {
+      trails.push({x: mx, y: my, r: 0, a: 0.5});
+      if (trails.length > 4) trails.shift();
+    }
+  });
+
+  document.addEventListener('mousedown', e => {
+    if (!e.target.closest(INTERACTIVE_SELECTOR)) return;
+    popStart = performance.now();
+    if (!prefersReducedMotion) ripples.push({x: mx, y: my, start: popStart});
   });
 
   function drawCursor() {
     crCtx.clearRect(0, 0, crCanvas.width, crCanvas.height);
+
+    // Morph-Fortschritt Richtung hoverTarget angleichen (weicher Crossfade, ~130ms)
+    morph += (hoverTarget - morph) * 0.25;
+    if (Math.abs(hoverTarget - morph) < 0.002) morph = hoverTarget;
+    const chAlpha = 1 - morph;
+
+    crCtx.save();
+    crCtx.globalAlpha = chAlpha;
 
     // Trails
     trails.forEach(tr => {
@@ -813,6 +841,49 @@
      [mx, my + gap, mx, my + gap + arm]].forEach(([x1,y1,x2,y2]) => {
       crCtx.beginPath(); crCtx.moveTo(x1,y1); crCtx.lineTo(x2,y2); crCtx.stroke();
     });
+
+    crCtx.restore();
+
+    // Häkchen (Logo-Symbol) — faded/skaliert ein, während das Fadenkreuz ausblendet
+    if (morph > 0.01) {
+      if (!prefersReducedMotion) pulseT += 0.06;
+      const popElapsed = performance.now() - popStart;
+      const popDur = 220;
+      let scale;
+      if (!prefersReducedMotion && popElapsed >= 0 && popElapsed < popDur) {
+        scale = 1.3 - 0.3 * (popElapsed / popDur); // kurzer Pop 1.3 -> 1
+      } else {
+        scale = prefersReducedMotion ? 1 : 1.06 + Math.sin(pulseT) * 0.06; // Dauer-Puls 1 <-> 1.12
+      }
+      const growIn = 0.85 + 0.15 * morph;
+      const s = (26 / 24) * scale * growIn;
+
+      crCtx.save();
+      crCtx.globalAlpha = morph;
+      crCtx.translate(mx, my);
+      crCtx.scale(s, s);
+      crCtx.translate(-12, -12);
+      crCtx.strokeStyle = GOLD + '1)';
+      crCtx.lineWidth = 3;
+      crCtx.lineCap = 'round';
+      crCtx.lineJoin = 'round';
+      crCtx.stroke(CHECK_PATH);
+      crCtx.restore();
+    }
+
+    // Klick-Ripple (Echo der Logo-Ringe)
+    for (let i = ripples.length - 1; i >= 0; i--) {
+      const rp = ripples[i];
+      const elapsed = performance.now() - rp.start;
+      const dur = 550;
+      if (elapsed > dur) { ripples.splice(i, 1); continue; }
+      const p = elapsed / dur;
+      crCtx.beginPath();
+      crCtx.arc(rp.x, rp.y, 6 + p * 26, 0, Math.PI * 2);
+      crCtx.strokeStyle = GOLD + ((1 - p) * 0.6) + ')';
+      crCtx.lineWidth = 1.4;
+      crCtx.stroke();
+    }
   }
 
   function loop() {
