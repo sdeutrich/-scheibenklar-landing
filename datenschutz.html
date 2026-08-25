@@ -58,7 +58,20 @@
   <hr>
 
   <h2>4. Die App – Local-First-Prinzip</h2>
-  <p>Die scheibenklar-App selbst verarbeitet alle Schießbuch-, Waffen- und Trainingsdaten ausschließlich lokal auf deinem Gerät. Es findet keine Übertragung dieser Daten an externe Server statt. Für die KI-Trefferauswertung werden Bilddaten temporär verarbeitet und nicht dauerhaft gespeichert.</p>
+  <p>Die scheibenklar-App speichert alle Schießbuch-, Waffen- und Trainingsdaten ausschließlich lokal auf deinem Gerät (localStorage). Diese Daten werden nicht an einen Server übertragen und sind für den Betreiber nicht einsehbar.</p>
+
+  <h2>4a. KI-Funktionen – Übermittlung an Google</h2>
+  <p>Zwei optionale Funktionen der App übermitteln Daten an einen externen Dienst: die <strong>KI-Scheibenauswertung</strong> und die <strong>KI-Langzeit-Trendanalyse</strong>. Beide sind freiwillig; ohne ihre Nutzung verlässt kein Inhalt dein Gerät.</p>
+  <ul>
+    <li><strong>Empfänger:</strong> Google – Gemini API (Modell <em>gemini-2.5-flash</em>). Vertragspartner für Nutzer im EWR ist die irische Google-Gesellschaft (Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Irland, bzw. bei aktiviertem Cloud-Billing Google Cloud EMEA Limited, 70 Sir John Rogerson’s Quay, Dublin 2, Irland). Die technische Verarbeitung kann durch die Google LLC, 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA erfolgen.</li>
+    <li><strong>Übermittelte Inhalte:</strong> bei der Scheibenauswertung das Scheiben-Foto bzw. die manuell eingegebenen Ringzahlen samt Trainingskontext (Disziplin, Kaliber, Entfernung, Munition, Waffenart, Zieloptik, Ladeart, Schusszahl, Wind, Wetter, körperliche Verfassung, Wettkampfdatum, Auszug der Trainingshistorie); bei der Trendanalyse die Liste deiner gespeicherten Auswertungen mit Datum, Disziplin, Ringzahl und Trainingsart. <strong>Nicht</strong> übermittelt werden Name, Geburtsdatum, WBK-Nummer, Vereinsdaten oder E-Mail-Adresse.</li>
+    <li><strong>Zweck:</strong> Auswertung des Trefferbildes und Erzeugung von Trainingshinweisen.</li>
+    <li><strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 lit. a DSGVO – Einwilligung durch die aktive, freiwillige Nutzung der jeweiligen Funktion.</li>
+    <li><strong>Drittlandbezug:</strong> Eine Verarbeitung in den USA ist nicht ausgeschlossen. Grundlage der Übermittlung sind die von Google einbezogenen EU-Standardvertragsklauseln (Art. 46 Abs. 2 lit. c DSGVO) sowie die Zertifizierung der Google LLC unter dem EU-US Data Privacy Framework (Art. 45 DSGVO).</li>
+    <li><strong>Speicherdauer:</strong> Der Betreiber speichert weder Fotos noch Analysetexte auf eigenen Servern. Google verwendet die übermittelten Inhalte für Nutzer im EWR nach eigenen Angaben <em>nicht</em> zur Verbesserung seiner Produkte und nicht zum Training seiner Modelle; sie werden dort lediglich für einen begrenzten Zeitraum protokolliert, um Missbrauch zu erkennen und zu verhindern.</li>
+    <li><strong>Widerspruch:</strong> Du kannst die KI-Funktionen jederzeit ungenutzt lassen und die Scheibenauswertung stattdessen im Offline-Modus mit manueller Ringeingabe verwenden.</li>
+  </ul>
+  <p>Weitere Informationen: <a href="https://policies.google.com/privacy" target="_blank">Datenschutzerklärung Google</a> · <a href="https://ai.google.dev/gemini-api/terms" target="_blank">Nutzungsbedingungen der Gemini API</a>. Die ausführliche Fassung findest du in der <a href="https://scheibenklar.vercel.app/datenschutz.html" target="_blank">Datenschutzerklärung der App</a>.</p>
 
   <hr>
 
@@ -73,7 +86,7 @@
 
   <hr>
 
-  <p style="font-size:13px; color:var(--muted);">Stand: Juli 2026</p>
+  <p style="font-size:13px; color:var(--muted);">Stand: August 2026</p>
 </main>
 
 <footer>scheibenklar · © 2026 Sebastian Deutrich · <a href="/impressum.html">Impressum</a></footer>

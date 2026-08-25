@@ -127,7 +127,7 @@
   .hero-stats { display: flex; gap: 3rem; justify-content: center; flex-wrap: wrap; }
   .stat-item { text-align: center; }
   .stat-num { font-size: 32px; font-weight: 600; color: var(--gold); line-height: 1; }
-  .stat-label { font-size: 12px; color: var(--muted); margin-top: 4px; max-width: 120px; line-height: 1.4; }
+  .stat-label { font-size: 12px; color: var(--muted); margin-top: 4px; max-width: 165px; line-height: 1.4; }
 
   /* MODULE GRID */
   .mod-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
@@ -317,15 +317,15 @@
 <section class="hero">
   <p class="hero-eyebrow">Digital <span>·</span> DSGVO-konform <span>·</span> Local-First</p>
   <h1 class="hero-title">scheibenklar</h1>
-  <p class="hero-sub">Der digitale Begleiter für deutsche Sportschützen — vom Schießbuch bis zur Vereinsverwaltung, inklusive KI-gestützter Trefferanalyse. Alles lokal auf deinem Gerät.</p>
+  <p class="hero-sub">Der digitale Begleiter für deutsche Sportschützen — vom Schießbuch bis zur Vereinsverwaltung, inklusive KI-gestützter Trefferanalyse. Deine Schießbuchdaten bleiben auf dem Gerät.</p>
   <div class="hero-btns">
     <button class="btn-gold" onclick="window.open('https://scheibenklar.vercel.app','_blank')">Kostenlos starten</button>
     <button class="btn-outline" onclick="document.getElementById('module').scrollIntoView({behavior:'smooth'})">Module entdecken ↓</button>
   </div>
   <div class="hero-stats">
     <div class="stat-item">
-      <div class="stat-num">100%</div>
-      <div class="stat-label">Daten bleiben auf deinem Gerät</div>
+      <div class="stat-num">Lokal</div>
+      <div class="stat-label">Deine Schießbuchdaten bleiben auf dem Gerät</div>
     </div>
     <div class="stat-item">
       <div class="stat-num">4</div>
@@ -333,7 +333,7 @@
     </div>
     <div class="stat-item">
       <div class="stat-num">§14</div>
-      <div class="stat-label">WaffG-konformes digitales Schießbuch</div>
+      <div class="stat-label">Digitales Schießbuch nach § 14 WaffG</div>
     </div>
     <div class="stat-item">
       <div class="stat-num">~15h</div>
@@ -352,7 +352,7 @@
     <p class="sec-sub">Von der gesetzlich vorgeschriebenen Dokumentation bis zur Vereinsverwaltung — 17 Module, ein System, keine Zettelwirtschaft. Vier davon dauerhaft kostenlos.</p>
     <div class="mod-grid">
 <div class="mod-card"><span class="mod-badge badge-free">KOSTENLOS</span><h3>Scheibenauswertung</h3><p>Zielscheibe abfotografieren, KI wertet Ringe und Trefferbild automatisch aus – offline nutzbar.</p></div>
-<div class="mod-card"><span class="mod-badge badge-free">KOSTENLOS</span><h3>Schießbuch §14</h3><p>Rechtskonformer digitaler Nachweis nach Waffengesetz – jederzeit griffbereit statt im Schrank.</p></div>
+<div class="mod-card"><span class="mod-badge badge-free">KOSTENLOS</span><h3>Schießbuch §14</h3><p>Dokumentationsgrundlage für den Bedürfnisnachweis nach §&nbsp;14 WaffG – jederzeit griffbereit statt im Schrank. Die Bescheinigung selbst stellt dein Schießsportverband aus.</p></div>
 <div class="mod-card"><span class="mod-badge badge-free">KOSTENLOS</span><h3>Fristen-Tracker</h3><p>Behörden-Fristen und Aufbewahrungspflichten im Blick, bevor sie kritisch werden.</p></div>
 <div class="mod-card"><span class="mod-badge badge-free">KOSTENLOS</span><h3>News & Recht</h3><p>Aktuelle Meldungen zu DSB und Waffenrecht, kompakt aufbereitet.</p></div>
 <div class="mod-card"><span class="mod-badge badge-free">1 WBK GRATIS</span><h3>WBK-Verwaltung</h3><p>Eine Waffenbesitzkarte kostenlos verwalten – Typ, Fristen und Waffen-Zuordnung inkl. Foto-Ablage. Premium: unbegrenzt.</p></div>
@@ -513,11 +513,11 @@
             <div style="display: flex; gap: 10px; align-items: flex-start; font-size: 13px; color: var(--muted);"><span style="color: var(--gold); flex-shrink: 0;">✓</span><span><strong style="color: var(--text);">WBK-Verwaltung mit Foto-Ablage</strong> — alle Dokumente griffbereit bei Kontrollen</span></div>
             <div style="display: flex; gap: 10px; align-items: flex-start; font-size: 13px; color: var(--muted);"><span style="color: var(--gold); flex-shrink: 0;">✓</span><span><strong style="color: var(--text);">KI-Trendanalyse</strong> — erkennt Schwächen über Monate, nicht nur im Moment</span></div>
             <div style="display: flex; gap: 10px; align-items: flex-start; font-size: 13px; color: var(--muted);"><span style="color: var(--gold); flex-shrink: 0;">✓</span><span><strong style="color: var(--text);">Munitionsverbrauch-Tracker</strong> — automatisch aus dem Schießbuch berechnet</span></div>
-            <div style="display: flex; gap: 10px; align-items: flex-start; font-size: 13px; color: var(--muted);"><span style="color: var(--gold); flex-shrink: 0;">✓</span><span><strong style="color: var(--text);">Schussbuch-Export als PDF</strong> — ein Klick, behördenfertig</span></div>
+            <div style="display: flex; gap: 10px; align-items: flex-start; font-size: 13px; color: var(--muted);"><span style="color: var(--gold); flex-shrink: 0;">✓</span><span><strong style="color: var(--text);">Schussbuch-Export als PDF</strong> — ein Klick, fertig formatiert für Behörde und Verband</span></div>
             <div style="display: flex; gap: 10px; align-items: flex-start; font-size: 13px; color: var(--muted);"><span style="color: var(--gold); flex-shrink: 0;">✓</span><span><strong style="color: var(--text);">Unbegrenzte Wettkampf-Historie</strong> — Entwicklung über Jahre nachvollziehen</span></div>
             <div style="height: 1px; background: var(--gold-border); margin: 6px 0;"></div>
             <p style="font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2px;">Verein — Vereinspaket 200 €/Jahr</p>
-            <div style="display: flex; gap: 10px; align-items: flex-start; font-size: 13px; color: var(--muted);"><span style="color: var(--gold); flex-shrink: 0;">✓</span><span><strong style="color: var(--text);">Mehrbenutzer-Zugriff</strong> — alle Mitglieder unter einem Vereinskonto</span></div>
+            <div style="display: flex; gap: 10px; align-items: flex-start; font-size: 13px; color: var(--muted);"><span style="color: var(--muted); flex-shrink: 0;">◇</span><span><strong style="color: var(--text);">Mehrbenutzer-Zugriff</strong> — geplant, derzeit noch nicht verfügbar; jedes Mitglied nutzt bislang seine eigene Installation</span></div>
             <div style="display: flex; gap: 10px; align-items: flex-start; font-size: 13px; color: var(--muted);"><span style="color: var(--gold); flex-shrink: 0;">✓</span><span><strong style="color: var(--text);">Wettkampfplaner mit Rangliste</strong> — Ergebnisse, Termine, Teilnehmer zentral verwalten</span></div>
             <div style="display: flex; gap: 10px; align-items: flex-start; font-size: 13px; color: var(--muted);"><span style="color: var(--gold); flex-shrink: 0;">✓</span><span><strong style="color: var(--text);">Fördermittel-Finder</strong> — passende Förderungen für den Verein automatisch ermitteln</span></div>
             <div style="display: flex; gap: 10px; align-items: flex-start; font-size: 13px; color: var(--muted);"><span style="color: var(--gold); flex-shrink: 0;">✓</span><span><strong style="color: var(--text);">Protokoll-Vorlagen</strong> — MV & Vorstandssitzungen strukturiert dokumentieren</span></div>
@@ -586,7 +586,7 @@
         </div>
         <ul class="price-ul">
           <li><span class="chk">✓</span> <span>Alles aus Premium</span></li>
-          <li><span class="chk">✓</span> <span>Mehrbenutzer-Zugriff für den Verein</span></li>
+          <li><span class="chk" style="color: var(--muted);">◇</span> <span>Mehrbenutzer-Zugriff für den Verein <em style="font-style: normal; color: var(--muted);">(geplant, noch nicht verfügbar)</em></span></li>
           <li><span class="chk">✓</span> <span>Fördermittel-Finder</span></li>
           <li><span class="chk">✓</span> <span>Wettkampfplaner mit Rangliste</span></li>
           <li><span class="chk">✓</span> <span>Protokoll-Vorlagen für MV & Vorstand</span></li>
