@@ -277,6 +277,13 @@
   .footer-links { display: flex; gap: 1.5rem; }
   .footer-links a { font-size: 12px; color: var(--muted); }
   .footer-links a:hover { color: var(--gold); }
+  .footer-kuendigen {
+    display: inline-flex; align-items: center; min-height: 44px;
+    padding: 10px 20px; border-radius: 9px; border: 1px solid var(--gold-border);
+    font-size: 13px; font-weight: 500; color: var(--gold); text-decoration: none;
+    transition: border-color 0.15s;
+  }
+  .footer-kuendigen:hover { border-color: var(--gold); color: var(--gold-l); }
 
   @media (max-width: 700px) {
     .nav-links { display: none; }
@@ -722,6 +729,7 @@
     <a href="mailto:hallo@scheibenklar.app">Kontakt</a>
     <a href="https://scheibenklar.vercel.app" target="_blank">App öffnen</a>
   </div>
+  <a class="footer-kuendigen" href="https://scheibenklar.vercel.app/kuendigen.html">Verträge hier kündigen</a>
 </footer>
 
 </div><!-- /page -->
