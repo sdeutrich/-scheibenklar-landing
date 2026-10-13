@@ -941,5 +941,33 @@
   loop();
 })();
 </script>
+<script>
+/* Quellenangabe (?src=, z. B. ?src=brief): bei gültigem Wert an alle
+   Einstiegslinks in die App anhängen. Nichts wird gespeichert (§ 25 TDDDG) –
+   die App liest src nur aus der URL und speichert ihn einmalig beim signUp. */
+(function () {
+  const APP = 'https://scheibenklar.vercel.app';
+  const src = new URLSearchParams(window.location.search).get('src');
+  if (!src || !/^[a-z0-9_-]{1,32}$/.test(src)) return;
+
+  function mitQuelle(href) {
+    const url = new URL(href);
+    url.searchParams.set('src', src);
+    return url.toString();
+  }
+
+  // App-Start- und ?kaufen=-Links (Rechtstexte wie /agb.html bleiben unverändert)
+  document.querySelectorAll('a[href^="' + APP + '"]').forEach(function (a) {
+    if (new URL(a.href).pathname === '/') a.href = mitQuelle(a.href);
+  });
+
+  // "App öffnen"/"Kostenlos starten"-Buttons: Inline-Handler durch Listener mit src ersetzen
+  document.querySelectorAll('button[onclick*="window.open(\'' + APP + '\'"]').forEach(function (btn) {
+    const ziel = mitQuelle(APP);
+    btn.removeAttribute('onclick');
+    btn.addEventListener('click', function () { window.open(ziel, '_blank'); });
+  });
+})();
+</script>
 </body>
 </html>
