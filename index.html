@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="/icons/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
 <meta name="description" content="scheibenklar – Der digitale Begleiter für deutsche Sportschützen. DSGVO-konform, Local-First, werbefrei.">
 <meta property="og:title" content="scheibenklar – Digitaler Schützenbegleiter">
 <meta property="og:description" content="KI-Trefferauswertung, digitales Schießbuch §14, Fristen-Tracker und mehr. 4 Module dauerhaft kostenlos.">
@@ -268,8 +271,8 @@
     display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
   }
   .footer-left { font-size: 12px; color: var(--muted); line-height: 1.6; }
-  .footer-links { display: flex; gap: 1.5rem; }
-  .footer-links a { font-size: 12px; color: var(--muted); }
+  .footer-links { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; }
+  .footer-links a { font-size: 12px; color: var(--muted); white-space: nowrap; }
   .footer-links a:hover { color: var(--gold); }
   .footer-kuendigen {
     display: inline-flex; align-items: center; min-height: 44px;
@@ -288,6 +291,8 @@
   }
   @media (max-width: 390px) {
     .nav-logo img { width: 40px; height: 40px; }
+    footer { padding: 2rem 1.25rem; }
+    .footer-links { column-gap: 0.75rem; }
   }
 </style>
 </head>
@@ -311,7 +316,7 @@
     <li><a href="#start">Start</a></li>
     <li><a href="#kontakt">Kontakt</a></li>
   </ul>
-  <button class="nav-cta" onclick="window.open('https://scheibenklar.vercel.app','_blank')">App öffnen</button>
+  <button class="nav-cta" data-app-start>App öffnen</button>
 </nav>
 
 <!-- HERO -->
@@ -320,7 +325,7 @@
   <h1 class="hero-title">scheibenklar</h1>
   <p class="hero-sub">Der digitale Begleiter für deutsche Sportschützen — vom Schießbuch bis zur Vereinsverwaltung, inklusive KI-gestützter Trefferanalyse. Deine Schießbuchdaten bleiben auf dem Gerät.</p>
   <div class="hero-btns">
-    <button class="btn-gold" onclick="window.open('https://scheibenklar.vercel.app','_blank')">Kostenlos starten</button>
+    <button class="btn-gold" data-app-start>Kostenlos starten</button>
     <button class="btn-outline" onclick="document.getElementById('module').scrollIntoView({behavior:'smooth'})">Module entdecken ↓</button>
   </div>
   <div class="hero-stats">
@@ -559,7 +564,7 @@
           <li><span class="chk">✓</span> <span>News & Recht</span></li>
           <li><span class="chk">✓</span> <span>Keine Werbung, kein Zeitlimit</span></li>
         </ul>
-        <a href="https://scheibenklar.vercel.app" target="_blank" class="price-btn price-btn-out">Kostenlos starten</a>
+        <a href="https://scheibenklar.vercel.app" target="_blank" rel="noopener" class="price-btn price-btn-out">Kostenlos starten</a>
       </div>
 
       <div class="price-card featured">
@@ -646,7 +651,7 @@
         </div>
       </div>
     </div>
-    <button class="btn-gold" style="font-size: 16px; padding: 16px 40px;" onclick="window.open('https://scheibenklar.vercel.app','_blank')">Jetzt kostenlos starten</button>
+    <button class="btn-gold" style="font-size: 16px; padding: 16px 40px;" data-app-start>Jetzt kostenlos starten</button>
   </div>
 </section>
 
@@ -721,7 +726,7 @@
     <a href="/impressum.html">Impressum</a>
     <a href="https://scheibenklar.vercel.app/agb.html">AGB</a>
     <a href="mailto:hallo@scheibenklar.app">Kontakt</a>
-    <a href="https://scheibenklar.vercel.app" target="_blank">App öffnen</a>
+    <a href="https://scheibenklar.vercel.app" target="_blank" rel="noopener">App öffnen</a>
   </div>
   <a class="footer-kuendigen" href="https://scheibenklar.vercel.app/kuendigen.html">Verträge hier kündigen</a>
   <a class="footer-kuendigen" href="https://scheibenklar.vercel.app/widerruf.html">Vertrag widerrufen</a>
@@ -942,13 +947,14 @@
 })();
 </script>
 <script>
-/* Quellenangabe (?src=, z. B. ?src=brief): bei gültigem Wert an alle
-   Einstiegslinks in die App anhängen. Nichts wird gespeichert (§ 25 TDDDG) –
-   die App liest src nur aus der URL und speichert ihn einmalig beim signUp. */
+/* App-Einstiege. Quellenangabe (?src=, z. B. ?src=brief): bei gültigem Wert
+   an alle Einstiegslinks in die App anhängen. Nichts wird gespeichert
+   (§ 25 TDDDG) – die App liest src nur aus der URL und speichert ihn
+   einmalig beim signUp. */
 (function () {
   const APP = 'https://scheibenklar.vercel.app';
-  const src = new URLSearchParams(window.location.search).get('src');
-  if (!src || !/^[a-z0-9_-]{1,32}$/.test(src)) return;
+  const roh = new URLSearchParams(window.location.search).get('src');
+  const src = roh && /^[a-z0-9_-]{1,32}$/.test(roh) ? roh : null;
 
   function mitQuelle(href) {
     const url = new URL(href);
@@ -956,16 +962,16 @@
     return url.toString();
   }
 
+  // "App öffnen"/"Kostenlos starten"-Buttons (statt Inline-onclick)
+  const startZiel = src ? mitQuelle(APP) : APP;
+  document.querySelectorAll('[data-app-start]').forEach(function (btn) {
+    btn.addEventListener('click', function () { window.open(startZiel, '_blank', 'noopener'); });
+  });
+
+  if (!src) return;
   // App-Start- und ?kaufen=-Links (Rechtstexte wie /agb.html bleiben unverändert)
   document.querySelectorAll('a[href^="' + APP + '"]').forEach(function (a) {
     if (new URL(a.href).pathname === '/') a.href = mitQuelle(a.href);
-  });
-
-  // "App öffnen"/"Kostenlos starten"-Buttons: Inline-Handler durch Listener mit src ersetzen
-  document.querySelectorAll('button[onclick*="window.open(\'' + APP + '\'"]').forEach(function (btn) {
-    const ziel = mitQuelle(APP);
-    btn.removeAttribute('onclick');
-    btn.addEventListener('click', function () { window.open(ziel, '_blank'); });
   });
 })();
 </script>
