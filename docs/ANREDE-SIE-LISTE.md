@@ -25,11 +25,24 @@ kein Duzen gefunden.
 Nicht aufgenommen: Zeile 316 „Start" (Navigationsziel, Substantiv), Zeile 526
 „jedes Mitglied nutzt" (3. Person).
 
-## Rechtstexte – nur gemeldet, nicht geändert
+## datenschutz.html – umgesetzt (Backlog Runde 2, ausdrücklich freigegeben)
 
-`datenschutz.html` duzt durchgehend (Zeilen 63, 69, 72, 75, 77, 80, 81, 83, 86, 92,
-96, 97), z. B. „Link verarbeitet dabei insbesondere deine E-Mail-Adresse …",
-„6. Deine Rechte", „Du hast gemäß DSGVO das Recht auf Auskunft …".
-Die Datenschutzerklärung der App (`scheibenklar/public/datenschutz.html`) siezt.
+Nur die Anrede; Inhalt, Rechtsgrundlagen, Fristen und Aufzählungen unverändert.
+
+| Zeile | alter Text | neuer Text |
+|---|---|---|
+| 63 | … Link verarbeitet dabei insbesondere deine E-Mail-Adresse, … damit wir deinen Tarif in der App freischalten … | … insbesondere Ihre E-Mail-Adresse, … damit wir Ihren Tarif in der App freischalten … |
+| 69 | … ausschließlich lokal auf deinem Gerät (localStorage). | … ausschließlich lokal auf Ihrem Gerät (localStorage). |
+| 72 | … werden sie nicht genutzt, verlässt kein Inhalt dein Gerät. | … verlässt kein Inhalt Ihr Gerät. |
+| 75 | … die Liste deiner gespeicherten Auswertungen … Kennzahlen deiner Schießbuch-Einträge … optional dein Trainingsziel … deine erfasste Ausrüstung … sowie optional dein Ziel. | … die Liste Ihrer gespeicherten Auswertungen … Kennzahlen Ihrer Schießbuch-Einträge … optional Ihr Trainingsziel … Ihre erfasste Ausrüstung … sowie optional Ihr Ziel. |
+| 77 | … widerrufbar, indem du die Funktion nicht mehr nutzt. | … widerrufbar, indem Sie die Funktion nicht mehr nutzen. |
+| 80 | Schlüssel: deine Konto-Kennung, … | Schlüssel: Ihre Konto-Kennung, … |
+| 81 | Du kannst jederzeit ausschließlich den Offline-Modus … | Sie können jederzeit ausschließlich den Offline-Modus … |
+| 83 | Die ausführliche Fassung findest du in der Datenschutzerklärung der App. | Die ausführliche Fassung finden Sie in der Datenschutzerklärung der App. |
+| 86 | Kommst du über einen Link mit Quellenangabe zu uns … zusammen mit deinem Nutzerkonto. … Auf deinem Endgerät … mit deinem Konto gelöscht. | Kommen Sie über einen Link mit Quellenangabe zu uns … zusammen mit Ihrem Nutzerkonto. … Auf Ihrem Endgerät … mit Ihrem Konto gelöscht. |
+| 92 | Dafür wird nichts auf deinem Gerät gespeichert, … | Dafür wird nichts auf Ihrem Gerät gespeichert, … |
+| 96 | 6. Deine Rechte | 6. Ihre Rechte |
+| 97 | Du hast gemäß DSGVO das Recht auf Auskunft, … Beschwerden kannst du bei der zuständigen Aufsichtsbehörde einreichen: … | Sie haben gemäß DSGVO das Recht auf Auskunft, … Beschwerden können Sie bei der zuständigen Aufsichtsbehörde einreichen: … |
+
 `impressum.html`: kein Duzen. Eine AGB- oder Widerrufsseite gibt es im
 Landing-Repo nicht (Links führen in die App).

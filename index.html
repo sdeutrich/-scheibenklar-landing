@@ -669,14 +669,12 @@
       <div>
         <label style="font-size:12px; color:var(--muted); letter-spacing:0.06em; text-transform:uppercase; display:block; margin-bottom:6px;">Name</label>
         <input type="text" id="cf-name" placeholder="Max Mustermann"
-          style="width:100%; background:var(--card); border:0.5px solid var(--gold-border); border-radius:8px; padding:12px 14px; font-size:14px; color:var(--text); outline:none; font-family:inherit;"
-          onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--gold-border)'">
+          style="width:100%; background:var(--card); border:0.5px solid var(--gold-border); border-radius:8px; padding:12px 14px; font-size:14px; color:var(--text); outline:none; font-family:inherit;">
       </div>
       <div>
         <label style="font-size:12px; color:var(--muted); letter-spacing:0.06em; text-transform:uppercase; display:block; margin-bottom:6px;">Betreff</label>
         <select id="cf-betreff"
-          style="width:100%; background:var(--card); border:0.5px solid var(--gold-border); border-radius:8px; padding:12px 14px; font-size:14px; color:var(--muted); outline:none; font-family:inherit; cursor:pointer;"
-          onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--gold-border)'">
+          style="width:100%; background:var(--card); border:0.5px solid var(--gold-border); border-radius:8px; padding:12px 14px; font-size:14px; color:var(--muted); outline:none; font-family:inherit; cursor:pointer;">
           <option value="Allgemeine Anfrage">Allgemeine Anfrage</option>
           <option value="Vereinspaket anfragen">Vereinspaket anfragen</option>
           <option value="Feedback zur App">Feedback zur App</option>
@@ -687,8 +685,7 @@
       <div>
         <label style="font-size:12px; color:var(--muted); letter-spacing:0.06em; text-transform:uppercase; display:block; margin-bottom:6px;">Nachricht</label>
         <textarea id="cf-nachricht" rows="5" placeholder="Ihre Nachricht..."
-          style="width:100%; background:var(--card); border:0.5px solid var(--gold-border); border-radius:8px; padding:12px 14px; font-size:14px; color:var(--text); outline:none; font-family:inherit; resize:vertical;"
-          onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--gold-border)'"></textarea>
+          style="width:100%; background:var(--card); border:0.5px solid var(--gold-border); border-radius:8px; padding:12px 14px; font-size:14px; color:var(--text); outline:none; font-family:inherit; resize:vertical;"></textarea>
       </div>
       <div>
         <button onclick="sendMail()" class="btn-gold" style="font-size:14px; padding:12px 28px;">
@@ -974,6 +971,14 @@
     if (new URL(a.href).pathname === '/') a.href = mitQuelle(a.href);
   });
 })();
+
+// Kontaktformular: goldener Rahmen im Fokus (statt Inline-onfocus/onblur)
+['cf-name', 'cf-betreff', 'cf-nachricht'].forEach(function (id) {
+  const feld = document.getElementById(id);
+  if (!feld) return;
+  feld.addEventListener('focus', function () { feld.style.borderColor = 'var(--gold)'; });
+  feld.addEventListener('blur', function () { feld.style.borderColor = 'var(--gold-border)'; });
+});
 </script>
 </body>
 </html>
