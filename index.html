@@ -326,7 +326,7 @@
   <p class="hero-sub">Der digitale Begleiter für deutsche Sportschützen — vom Schießbuch bis zur Vereinsverwaltung, inklusive KI-gestützter Trefferanalyse. Ihre Schießbuchdaten bleiben auf dem Gerät.</p>
   <div class="hero-btns">
     <button class="btn-gold" data-app-start>Kostenlos starten</button>
-    <button class="btn-outline" onclick="document.getElementById('module').scrollIntoView({behavior:'smooth'})">Module entdecken ↓</button>
+    <button class="btn-outline" id="btn-module-entdecken">Module entdecken ↓</button>
   </div>
   <div class="hero-stats">
     <div class="stat-item">
@@ -688,7 +688,7 @@
           style="width:100%; background:var(--card); border:0.5px solid var(--gold-border); border-radius:8px; padding:12px 14px; font-size:14px; color:var(--text); outline:none; font-family:inherit; resize:vertical;"></textarea>
       </div>
       <div>
-        <button onclick="sendMail()" class="btn-gold" style="font-size:14px; padding:12px 28px;">
+        <button id="btn-nachricht-senden" class="btn-gold" style="font-size:14px; padding:12px 28px;">
           Nachricht senden
         </button>
       </div>
@@ -971,6 +971,12 @@
     if (new URL(a.href).pathname === '/') a.href = mitQuelle(a.href);
   });
 })();
+
+// „Module entdecken ↓" und „Nachricht senden" (statt Inline-onclick)
+document.getElementById('btn-module-entdecken').addEventListener('click', function () {
+  document.getElementById('module').scrollIntoView({ behavior: 'smooth' });
+});
+document.getElementById('btn-nachricht-senden').addEventListener('click', function () { sendMail(); });
 
 // Kontaktformular: goldener Rahmen im Fokus (statt Inline-onfocus/onblur)
 ['cf-name', 'cf-betreff', 'cf-nachricht'].forEach(function (id) {
