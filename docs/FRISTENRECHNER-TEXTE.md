@@ -81,6 +81,8 @@ Datum [P]
 Restzeit [UI]
 > noch {tage} Tage
 
+Einzahl: noch 1 Tag
+
 Erläuterung [P]
 > Den genauen Zeitpunkt bestimmt Ihre Waffenbehörde. Sie fordert Sie schriftlich auf. Ohne Aufforderung müssen Sie nichts einreichen.
 

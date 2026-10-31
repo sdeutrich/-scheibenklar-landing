@@ -87,6 +87,12 @@
     return { datum: datum };
   }
 
+  /* Restzeit bis zur Prüfung: 0 → "ab heute", 1 → Einzahl */
+  function restzeitText(tage) {
+    if (tage === 0) return 'ab heute';
+    return tage === 1 ? 'noch 1 Tag' : 'noch ' + tage + ' Tage';
+  }
+
   function berechne(erste, kontingent, heute) {
     return {
       pruefung: naechstePruefung(erste, heute),
@@ -99,7 +105,7 @@
     JAHR_MIN: JAHR_MIN, istSchaltjahr: istSchaltjahr, addJahre: addJahre, vergleiche: vergleiche,
     plusTage: plusTage, tageZwischen: tageZwischen, heuteBerlin: heuteBerlin, formatDatum: formatDatum,
     naechstePruefung: naechstePruefung, zehnJahresRegel: zehnJahresRegel, pruefeDatum: pruefeDatum,
-    berechne: berechne
+    restzeitText: restzeitText, berechne: berechne
   };
   if (typeof module === 'object' && module.exports) { module.exports = api; return; }
 
@@ -141,7 +147,7 @@
     k.appendChild(el('div', 'fr-para', '§ 4 Abs. 4 WaffG · die Behörde prüft alle fünf Jahre'));
     k.appendChild(absatz('fr-datum', ['Voraussichtlich ab ', { fett: formatDatum(r.pruefung.datum) },
       ' (' + r.pruefung.jahre + ' Jahre nach Ihrer ersten Eintragung)']));
-    k.appendChild(el('div', 'fr-rest', r.pruefung.tage === 0 ? 'ab heute' : 'noch ' + r.pruefung.tage + ' Tage'));
+    k.appendChild(el('div', 'fr-rest', restzeitText(r.pruefung.tage)));
     k.appendChild(el('p', '', 'Den genauen Zeitpunkt bestimmt Ihre Waffenbehörde. Sie fordert Sie schriftlich auf. Ohne Aufforderung müssen Sie nichts einreichen.'));
     k.appendChild(block('Was ist zu tun?', r.zehn.erreicht
       ? 'Sie brauchen nur eine Bescheinigung Ihres Schießsportvereins über die Mitgliedschaft.'

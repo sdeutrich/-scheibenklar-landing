@@ -144,6 +144,15 @@ test('berechne: Überkontingent-Kennzeichen', () => {
   assert.equal(FR.berechne(D(2020, 1, 1), 'grund', HEUTE).ueberkontingent, false);
 });
 
+test('Restzeit: ab heute, Einzahl, Mehrzahl', () => {
+  assert.equal(FR.restzeitText(0), 'ab heute');
+  assert.equal(FR.restzeitText(1), 'noch 1 Tag');
+  assert.equal(FR.restzeitText(2), 'noch 2 Tage');
+  assert.equal(FR.restzeitText(1096), 'noch 1096 Tage');
+  // Termin morgen → Einzahl
+  assert.equal(FR.restzeitText(FR.naechstePruefung(D(2016, 11, 1), D(2026, 10, 31)).tage), 'noch 1 Tag');
+});
+
 test('formatDatum: TT.MM.JJJJ', () => {
   assert.equal(FR.formatDatum(D(2026, 3, 1)), '01.03.2026');
 });
