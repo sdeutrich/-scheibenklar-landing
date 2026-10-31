@@ -153,6 +153,53 @@ test('Restzeit: ab heute, Einzahl, Mehrzahl', () => {
   assert.equal(FR.restzeitText(FR.naechstePruefung(D(2016, 11, 1), D(2026, 10, 31)).tage), 'noch 1 Tag');
 });
 
+test('Zählung: Berechnung zählt höchstens 1× pro Seitenaufruf', () => {
+  const gesendet = [];
+  const z = FR.erstelleZaehler((inhalt) => gesendet.push(JSON.parse(inhalt)), 'ig');
+  z.aufruf();
+  z.berechnung();
+  z.berechnung();
+  z.berechnung();
+  z.appKlick();
+  z.appKlick();
+  assert.deepEqual(gesendet.map((g) => g.ziel), [
+    'fristenrechner_aufruf', 'fristenrechner_berechnung', 'fristenrechner_app_klick', 'fristenrechner_app_klick',
+  ]);
+  // neuer Seitenaufruf = neuer Zähler → wieder eine Berechnung
+  const neu = [];
+  const z2 = FR.erstelleZaehler((inhalt) => neu.push(JSON.parse(inhalt)), null);
+  z2.berechnung();
+  z2.berechnung();
+  assert.equal(neu.length, 1);
+});
+
+test('Zählung: Beacon-Inhalt enthält nur src und ziel', () => {
+  const gesendet = [];
+  const z = FR.erstelleZaehler((inhalt) => gesendet.push(inhalt), 'rechner');
+  z.aufruf(); z.berechnung(); z.appKlick();
+  for (const roh of gesendet) {
+    const obj = JSON.parse(roh);
+    assert.deepEqual(Object.keys(obj).sort(), ['src', 'ziel']);
+    assert.equal(obj.src, 'rechner');
+    assert.ok(!/\d{4}|grund|ueber/.test(roh), roh); // kein Datum, kein Kontingent
+  }
+  assert.equal(FR.beaconInhalt(null, 'fristenrechner_aufruf'), '{"src":"direkt","ziel":"fristenrechner_aufruf"}');
+});
+
+test('Zählung: Sendefehler bricht nichts ab', () => {
+  const z = FR.erstelleZaehler(() => { throw new Error('offline'); }, null);
+  assert.doesNotThrow(() => { z.aufruf(); z.berechnung(); z.appKlick(); });
+});
+
+test('quelleAusUrl: gleiche Whitelist wie Landing/App', () => {
+  assert.equal(FR.quelleAusUrl('?src=ig'), 'ig');
+  assert.equal(FR.quelleAusUrl('?src=rechner&x=1'), 'rechner');
+  assert.equal(FR.quelleAusUrl('?src=IG'), null);
+  assert.equal(FR.quelleAusUrl('?src=' + 'x'.repeat(33)), null);
+  assert.equal(FR.quelleAusUrl('?src=%3Cscript%3E'), null);
+  assert.equal(FR.quelleAusUrl(''), null);
+});
+
 test('formatDatum: TT.MM.JJJJ', () => {
   assert.equal(FR.formatDatum(D(2026, 3, 1)), '01.03.2026');
 });

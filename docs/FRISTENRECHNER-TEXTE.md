@@ -24,7 +24,7 @@ H1 [UI]
 > Fristenrechner für Sportschützen
 
 Einleitung [UI]
-> Geben Sie das Datum Ihrer ersten Waffeneintragung als Sportschütze ein. Der Rechner zeigt, wann die Waffenbehörde Ihr Bedürfnis voraussichtlich prüft und welche Nachweise dann gelten. Die Berechnung läuft nur in Ihrem Browser – nichts wird übertragen oder gespeichert.
+> Geben Sie das Datum Ihrer ersten Waffeneintragung als Sportschütze ein. Der Rechner zeigt, wann die Waffenbehörde Ihr Bedürfnis voraussichtlich prüft und welche Nachweise dann gelten. Die Berechnung läuft nur in Ihrem Browser – Ihre Eingaben werden weder übertragen noch gespeichert.
 
 Geltungsbereich [G]
 > Gilt für Sportschützen nach § 14 WaffG (grüne WBK als Sportschütze, gelbe WBK). Nicht für Jäger und nicht für Erlaubnisse mit anderem Bedürfnis.
@@ -146,7 +146,7 @@ Haftung [UI]
 > Keine Rechtsberatung. Der Rechner gibt eine unverbindliche Orientierung auf Grundlage Ihrer Angaben und des Waffengesetzes (Stand 31.10.2026). Maßgeblich sind die Anforderungen Ihrer Waffenbehörde und Ihres Schießsportverbands.
 
 Datenschutz [UI]
-> Ihre Eingaben bleiben in diesem Browserfenster. Keine Anmeldung, keine Cookies, keine Speicherung.
+> Ihre Eingaben bleiben in diesem Browserfenster und werden nicht übertragen. Wir zählen anonym, wie oft die Seite aufgerufen, eine Berechnung gestartet und der App-Knopf genutzt wird – ohne Cookies und ohne Bezug zu Ihrer Person.
 
 ## 6. App-Knopf
 

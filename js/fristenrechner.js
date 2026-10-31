@@ -5,7 +5,9 @@
    Gerechnet wird ausschließlich mit Kalenderdaten { j, m, t } (Ganzzahlen)
    bzw. Date.UTC – nie mit lokaler Zeit, damit Zeitumstellung und Zeitzone
    kein Datum verschieben. "Heute" ist das Kalenderdatum in Europe/Berlin.
-   Kein Speichern, kein Netzwerk, keine Cookies, kein localStorage.
+   Kein Speichern, keine Cookies, kein localStorage. Einziger Netzwerk-
+   zugriff: anonyme Zählung per sendBeacon an /api/klick der App mit genau
+   { src, ziel } – nie Datum, Kontingent oder andere Eingaben.
 
    Regeln:
    - Bedürfnisprüfung (§ 4 Abs. 4 WaffG): erster 5-Jahres-Termin ab der
@@ -18,6 +20,8 @@
   'use strict';
 
   var JAHR_MIN = 1972;
+  var KLICK_URL = 'https://scheibenklar.vercel.app/api/klick';
+  var QUELLE_MUSTER = /^[a-z0-9_-]{1,32}$/;
 
   function istSchaltjahr(j) { return (j % 4 === 0 && j % 100 !== 0) || j % 400 === 0; }
 
@@ -93,6 +97,36 @@
     return tage === 1 ? 'noch 1 Tag' : 'noch ' + tage + ' Tage';
   }
 
+  /* Quellenangabe (?src=) der Rechnerseite, gleiche Whitelist wie Landing
+     und App; ungültig oder fehlend → null */
+  function quelleAusUrl(suche) {
+    var roh = new URLSearchParams(suche || '').get('src');
+    return roh && QUELLE_MUSTER.test(roh) ? roh : null;
+  }
+
+  /* Beacon-Inhalt: ausschließlich src und ziel */
+  function beaconInhalt(src, ziel) {
+    return JSON.stringify({ src: src || 'direkt', ziel: ziel });
+  }
+
+  /* Anonyme Zählung. senden(inhalt) überträgt den Beacon-Inhalt; die
+     Berechnung zählt höchstens einmal pro Seitenaufruf. */
+  function erstelleZaehler(senden, src) {
+    var berechnungGezaehlt = false;
+    function zaehle(ziel) {
+      try { senden(beaconInhalt(src, ziel)); } catch (e) {}
+    }
+    return {
+      aufruf: function () { zaehle('fristenrechner_aufruf'); },
+      berechnung: function () {
+        if (berechnungGezaehlt) return;
+        berechnungGezaehlt = true;
+        zaehle('fristenrechner_berechnung');
+      },
+      appKlick: function () { zaehle('fristenrechner_app_klick'); }
+    };
+  }
+
   function berechne(erste, kontingent, heute) {
     return {
       pruefung: naechstePruefung(erste, heute),
@@ -105,7 +139,8 @@
     JAHR_MIN: JAHR_MIN, istSchaltjahr: istSchaltjahr, addJahre: addJahre, vergleiche: vergleiche,
     plusTage: plusTage, tageZwischen: tageZwischen, heuteBerlin: heuteBerlin, formatDatum: formatDatum,
     naechstePruefung: naechstePruefung, zehnJahresRegel: zehnJahresRegel, pruefeDatum: pruefeDatum,
-    restzeitText: restzeitText, berechne: berechne
+    restzeitText: restzeitText, berechne: berechne,
+    quelleAusUrl: quelleAusUrl, beaconInhalt: beaconInhalt, erstelleZaehler: erstelleZaehler
   };
   if (typeof module === 'object' && module.exports) { module.exports = api; return; }
 
@@ -210,6 +245,13 @@
     if (!form || !ergebnis) return;
     var w = document.getElementById('fr-erste-w');
 
+    var zaehler = erstelleZaehler(function (inhalt) {
+      if (navigator.sendBeacon) navigator.sendBeacon(KLICK_URL, inhalt);
+    }, quelleAusUrl(window.location.search));
+    zaehler.aufruf();
+    var appKnopf = document.getElementById('fr-app-knopf');
+    if (appKnopf) appKnopf.addEventListener('click', function () { zaehler.appKlick(); });
+
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       var heute = heuteBerlin();
@@ -237,6 +279,7 @@
       ergebnis.appendChild(karteGrundkontingent(r));
       if (r.ueberkontingent) ergebnis.appendChild(karteUeberkontingent());
       ergebnis.hidden = false;
+      zaehler.berechnung();
       ergebnis.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
   }
