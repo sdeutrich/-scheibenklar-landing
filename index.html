@@ -109,7 +109,15 @@
     color: var(--muted); max-width: 520px;
     line-height: 1.65; margin-bottom: 3rem;
   }
-  .hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 4rem; }
+  .hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 0.75rem; }
+  a.btn-outline { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
+  .hero-link {
+    background: none; border: none; cursor: none;
+    color: var(--muted); font-size: 13px;
+    min-height: 44px; padding: 0 12px; margin-bottom: 3rem;
+    transition: color 0.15s;
+  }
+  .hero-link:hover { color: var(--gold); }
   .btn-gold {
     background: var(--gold); color: var(--night);
     font-size: 15px; font-weight: 600;
@@ -310,6 +318,7 @@
     <span class="nav-logo-text">scheibenklar</span>
   </div>
   <ul class="nav-links">
+    <li><a href="/fristenrechner">Fristenrechner</a></li>
     <li><a href="#module">Module</a></li>
     <li><a href="#vergleich">Vergleich</a></li>
     <li><a href="#preise">Preise</a></li>
@@ -326,8 +335,9 @@
   <p class="hero-sub">Der digitale Begleiter für deutsche Sportschützen — vom Schießbuch bis zur Vereinsverwaltung, inklusive KI-gestützter Trefferanalyse. Ihre Schießbuchdaten bleiben auf dem Gerät.</p>
   <div class="hero-btns">
     <button class="btn-gold" data-app-start>Kostenlos starten</button>
-    <button class="btn-outline" id="btn-module-entdecken">Module entdecken ↓</button>
+    <a class="btn-outline" href="/fristenrechner">Fristen berechnen – ohne Anmeldung</a>
   </div>
+  <button class="hero-link" id="btn-module-entdecken">Module entdecken ↓</button>
   <div class="hero-stats">
     <div class="stat-item">
       <div class="stat-num">Lokal</div>
@@ -359,7 +369,7 @@
     <div class="mod-grid">
 <div class="mod-card"><span class="mod-badge badge-free">KOSTENLOS</span><h3>Scheibenauswertung</h3><p>Zielscheibe abfotografieren, KI wertet Ringe und Trefferbild automatisch aus. Manuelle Auswertung auch offline. Die KI-Auswertung braucht eine Internetverbindung.</p></div>
 <div class="mod-card"><span class="mod-badge badge-free">KOSTENLOS</span><h3>Schießbuch §14</h3><p>Dokumentationsgrundlage für den Bedürfnisnachweis nach §&nbsp;14 WaffG – jederzeit griffbereit statt im Schrank. Die Bescheinigung selbst stellt Ihr Schießsportverband aus.</p></div>
-<div class="mod-card"><span class="mod-badge badge-free">KOSTENLOS</span><h3>Fristen-Tracker</h3><p>Behörden-Fristen und Aufbewahrungspflichten im Blick, bevor sie kritisch werden.</p><a href="/fristenrechner" style="display: inline-flex; align-items: center; min-height: 44px; margin-top: 4px; font-size: 13px;">Jetzt Frist berechnen →</a></div>
+<div class="mod-card"><span class="mod-badge badge-free">KOSTENLOS</span><h3>Fristen-Tracker</h3><p>Bedürfnisprüfung, 10-Jahres-Regel und Schießnachweis im Blick, bevor es kritisch wird.</p><a href="/fristenrechner" style="display: inline-flex; align-items: center; min-height: 44px; margin-top: 4px; font-size: 13px;">Jetzt Frist berechnen →</a></div>
 <div class="mod-card"><span class="mod-badge badge-free">KOSTENLOS</span><h3>News & Recht</h3><p>Aktuelle Meldungen zu DSB und Waffenrecht, kompakt aufbereitet.</p></div>
 <div class="mod-card"><span class="mod-badge badge-free">1 WBK GRATIS</span><h3>WBK-Verwaltung</h3><p>Eine Waffenbesitzkarte kostenlos verwalten – Typ, Fristen und Waffen-Zuordnung. Premium: unbegrenzt.</p></div>
 <div class="mod-card"><span class="mod-badge badge-free">2 WAFFEN GRATIS</span><h3>Mein Waffenarsenal</h3><p>Zentrale Waffenverwaltung mit Kaliber, Distanzen und automatischem DSB-Disziplin-Vorschlag. Free: 2 Waffen, Premium: unbegrenzt.</p></div>
