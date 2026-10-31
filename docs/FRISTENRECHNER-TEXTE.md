@@ -15,7 +15,7 @@ Meta-Titel [UI]
 > Fristenrechner WBK: Nächste Bedürfnisprüfung | scheibenklar
 
 Meta-Beschreibung [UI]
-> Wann prüft die Waffenbehörde Ihr Bedürfnis? Kostenlos berechnen – mit 4/6-Regel und 10-Jahres-Regel nach § 14 WaffG. Ohne Anmeldung, ohne Speichern.
+> Wann prüft die Waffenbehörde Ihr Bedürfnis? Kostenlos berechnen – mit 4/6-Regel und 10-Jahres-Regel nach § 14 WaffG. Ohne Anmeldung.
 
 Eyebrow [UI]
 > § 14 WaffG · Sportschützen · ohne Anmeldung
