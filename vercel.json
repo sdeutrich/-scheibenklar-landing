@@ -1,4 +1,7 @@
 {
+  "rewrites": [
+    { "source": "/fristenrechner", "destination": "/fristenrechner.html" }
+  ],
   "headers": [
     {
       "source": "/(.*)",

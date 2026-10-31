@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="/icons/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+<title>Fristenrechner WBK: Nächste Bedürfnisprüfung | scheibenklar</title>
+<meta name="description" content="Wann prüft die Waffenbehörde Ihr Bedürfnis? Kostenlos berechnen – mit 4/6-Regel und 10-Jahres-Regel nach § 14 WaffG. Ohne Anmeldung, ohne Speichern.">
+<link rel="canonical" href="https://www.scheibenklar.app/fristenrechner">
+<meta property="og:title" content="Fristenrechner WBK: Nächste Bedürfnisprüfung | scheibenklar">
+<meta property="og:description" content="Wann prüft die Waffenbehörde Ihr Bedürfnis? Kostenlos berechnen – mit 4/6-Regel und 10-Jahres-Regel nach § 14 WaffG. Ohne Anmeldung, ohne Speichern.">
+<meta property="og:url" content="https://www.scheibenklar.app/fristenrechner">
+<style>
+  :root {
+    --night: #0D1B2A;
+    --gold: #C9A84C;
+    --gold-l: #E8CC7A;
+    --gold-dim: rgba(201,168,76,0.12);
+    --gold-border: rgba(201,168,76,0.22);
+    --card: rgba(255,255,255,0.04);
+    --text: #F0EDE6;
+    --muted: #8A8478;
+    --fehler: #E8A0A0;
+    --r: 12px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background: var(--night);
+    color: var(--text);
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+  a { color: var(--gold); text-decoration: none; }
+  a:hover { color: var(--gold-l); }
+
+  /* NAV (wie Landing) */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(13,27,42,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 0.5px solid var(--gold-border);
+    padding: 0.9rem 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-logo { display: flex; align-items: center; gap: 10px; }
+  .nav-logo img {
+    width: 52px; height: 52px; object-fit: contain; display: block;
+    border-radius: 50%; border: 1px solid var(--gold);
+  }
+  .nav-logo-text { font-size: 16px; font-weight: 500; color: var(--gold); letter-spacing: 0.05em; }
+  .nav-zurueck { display: inline-flex; align-items: center; min-height: 44px; font-size: 13px; color: var(--muted); }
+
+  /* INHALT */
+  .main { max-width: 680px; margin: 0 auto; padding: 3rem 2rem 4rem; }
+  .eyebrow { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.5rem; }
+  h1 { font-size: clamp(26px, 5vw, 34px); font-weight: 500; margin-bottom: 1rem; line-height: 1.2; }
+  .intro { font-size: 15px; color: var(--muted); line-height: 1.7; margin-bottom: 1rem; }
+  .geltung {
+    font-size: 13px; color: var(--muted); line-height: 1.6;
+    border-left: 2px solid var(--gold-border); padding: 0.25rem 0 0.25rem 0.9rem; margin-bottom: 2rem;
+  }
+
+  /* FORMULAR */
+  .fr-form {
+    background: var(--card); border: 0.5px solid var(--gold-border); border-radius: var(--r);
+    padding: 1.5rem; margin-bottom: 2rem;
+  }
+  fieldset { border: none; margin-bottom: 1.5rem; min-width: 0; }
+  legend { font-size: 15px; font-weight: 500; margin-bottom: 0.6rem; padding: 0; }
+  .hilfe { font-size: 13px; color: var(--muted); line-height: 1.6; margin-top: 0.6rem; }
+  .dw { display: grid; grid-template-columns: 4.5rem minmax(0, 1fr) 5.5rem; gap: 8px; }
+  .inp {
+    width: 100%; min-width: 0; min-height: 48px;
+    background: rgba(255,255,255,0.06); color: var(--text);
+    border: 0.5px solid var(--gold-border); border-radius: 8px;
+    padding: 0 12px; font-size: 16px; font-family: inherit; outline: none;
+  }
+  .inp:focus { border-color: var(--gold); }
+  .inp[aria-invalid="true"] { border-color: var(--fehler); }
+  select.inp { appearance: none; -webkit-appearance: none; cursor: pointer;
+    background-image: linear-gradient(45deg, transparent 50%, var(--gold) 50%), linear-gradient(135deg, var(--gold) 50%, transparent 50%);
+    background-position: calc(100% - 18px) 21px, calc(100% - 13px) 21px;
+    background-size: 5px 5px; background-repeat: no-repeat; padding-right: 30px; }
+  select.inp option { background: var(--night); color: var(--text); }
+  .wahl { display: grid; gap: 8px; }
+  .wahl label {
+    display: flex; align-items: center; gap: 12px; min-height: 48px;
+    padding: 10px 14px; border: 0.5px solid var(--gold-border); border-radius: 8px;
+    font-size: 15px; cursor: pointer;
+  }
+  .wahl label:has(input:checked) { border-color: var(--gold); background: var(--gold-dim); }
+  .wahl input { width: 20px; height: 20px; accent-color: var(--gold); flex-shrink: 0; }
+  .fehler { font-size: 13px; color: var(--fehler); margin-top: 0.5rem; line-height: 1.5; }
+  .btn-gold {
+    display: inline-flex; align-items: center; justify-content: center; min-height: 48px;
+    background: var(--gold); color: var(--night);
+    font-size: 15px; font-weight: 600; font-family: inherit;
+    padding: 14px 32px; border-radius: 9px; border: none; cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-gold:hover { background: var(--gold-l); color: var(--night); }
+
+  /* ERGEBNIS */
+  .fr-ergebnis { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2.5rem; scroll-margin-top: 90px; }
+  .fr-karte {
+    background: var(--card); border: 0.5px solid var(--gold-border); border-radius: var(--r);
+    padding: 1.25rem 1.5rem;
+  }
+  .fr-karte p { font-size: 14px; color: var(--muted); line-height: 1.65; margin-bottom: 0.6rem; }
+  .fr-karte p:last-child { margin-bottom: 0; }
+  .fr-titel { font-size: 18px; font-weight: 500; margin-bottom: 0.4rem; color: var(--text); }
+  .fr-titel strong { color: var(--gold); font-weight: 600; }
+  .fr-para { font-size: 12px; color: var(--gold); letter-spacing: 0.03em; margin-bottom: 0.9rem; }
+  .fr-karte .fr-datum { font-size: 16px; color: var(--text); margin-bottom: 0.25rem; }
+  .fr-datum strong { color: var(--gold); }
+  .fr-rest { font-size: 13px; color: var(--gold-l); margin-bottom: 0.9rem; }
+  .fr-block { border-top: 0.5px solid var(--gold-border); padding-top: 0.75rem; margin-top: 0.75rem; }
+  .fr-label { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.35rem; }
+  .fr-karte .fr-ok { color: var(--text); }
+  .fr-karte .fr-hinweis { font-size: 13px; border-left: 2px solid var(--gold-border); padding-left: 0.75rem; }
+  .fr-karte .fr-tipp { font-size: 13px; font-style: italic; }
+  .fr-liste { margin: 0 0 0.6rem 1.25rem; }
+  .fr-liste li { font-size: 14px; color: var(--muted); line-height: 1.65; }
+  .fr-liste strong { color: var(--text); }
+
+  /* APP-KNOPF */
+  .app-box {
+    border: 1px solid var(--gold-border); border-radius: var(--r); background: var(--gold-dim);
+    padding: 1.5rem; margin-bottom: 2rem;
+  }
+  .app-box p { font-size: 14px; color: var(--text); line-height: 1.65; margin-bottom: 1rem; }
+  .app-box .klein { font-size: 12px; color: var(--muted); margin: 0.75rem 0 0; }
+  .rechtlich { font-size: 12px; color: var(--muted); line-height: 1.6; margin-bottom: 0.5rem; }
+
+  /* FOOTER (wie Landing) */
+  footer {
+    padding: 2rem;
+    border-top: 0.5px solid var(--gold-border);
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
+  }
+  .footer-left { font-size: 12px; color: var(--muted); line-height: 1.6; }
+  .footer-links { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; }
+  .footer-links a { font-size: 12px; color: var(--muted); white-space: nowrap; }
+  .footer-links a:hover { color: var(--gold); }
+  .footer-kuendigen {
+    display: inline-flex; align-items: center; min-height: 44px;
+    padding: 10px 20px; border-radius: 9px; border: 1px solid var(--gold-border);
+    font-size: 13px; font-weight: 500; color: var(--gold); text-decoration: none;
+    transition: border-color 0.15s;
+  }
+  .footer-kuendigen:hover { border-color: var(--gold); color: var(--gold-l); }
+
+  @media (max-width: 700px) {
+    nav { padding: 0.75rem 16px; }
+    .main { padding: 2rem 16px 3rem; }
+    .fr-form, .app-box { padding: 1.25rem 1rem; }
+    .fr-karte { padding: 1.1rem 1rem; }
+    .btn-gold { width: 100%; padding: 14px 16px; text-align: center; }
+  }
+  @media (max-width: 390px) {
+    .nav-logo img { width: 40px; height: 40px; }
+    .dw { grid-template-columns: 3.75rem minmax(0, 1fr) 4.75rem; gap: 6px; }
+    footer { padding: 2rem 16px; }
+    .footer-links { column-gap: 0.75rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">
+    <img src="/logo-scheibenklar.png" alt="scheibenklar Logo" width="52" height="52">
+    <span class="nav-logo-text">scheibenklar</span>
+  </a>
+  <a class="nav-zurueck" href="/">← Zurück</a>
+</nav>
+
+<main class="main">
+  <p class="eyebrow">§ 14 WaffG · Sportschützen · ohne Anmeldung</p>
+  <h1>Fristenrechner für Sportschützen</h1>
+  <p class="intro">Geben Sie das Datum Ihrer ersten Waffeneintragung als Sportschütze ein. Der Rechner zeigt, wann die Waffenbehörde Ihr Bedürfnis voraussichtlich prüft und welche Nachweise dann gelten. Die Berechnung läuft nur in Ihrem Browser – nichts wird übertragen oder gespeichert.</p>
+  <p class="geltung">Gilt für Sportschützen nach § 14 WaffG (grüne WBK als Sportschütze, gelbe WBK). Nicht für Jäger und nicht für Erlaubnisse mit anderem Bedürfnis.</p>
+
+  <form id="fr-form" class="fr-form" novalidate>
+    <fieldset>
+      <legend>Erste Waffeneintragung als Sportschütze</legend>
+      <span id="fr-erste-w" class="dw">
+        <input type="text" class="dw-d inp" placeholder="TT" inputmode="numeric" maxlength="2" autocomplete="off" aria-label="Tag" aria-describedby="fr-hilfe-datum fr-fehler-datum">
+        <select class="dw-m inp" aria-label="Monat" aria-describedby="fr-hilfe-datum fr-fehler-datum">
+          <option value="">Monat</option><option value="1">Jan</option><option value="2">Feb</option><option value="3">Mär</option><option value="4">Apr</option><option value="5">Mai</option><option value="6">Jun</option><option value="7">Jul</option><option value="8">Aug</option><option value="9">Sep</option><option value="10">Okt</option><option value="11">Nov</option><option value="12">Dez</option>
+        </select>
+        <input type="text" class="dw-y inp" placeholder="JJJJ" inputmode="numeric" maxlength="4" autocomplete="off" aria-label="Jahr" aria-describedby="fr-hilfe-datum fr-fehler-datum">
+      </span>
+      <input type="hidden" id="fr-erste">
+      <p id="fr-fehler-datum" class="fehler" role="alert" hidden></p>
+      <p id="fr-hilfe-datum" class="hilfe">Datum, an dem die erste Schusswaffe in Ihre WBK eingetragen wurde, oder – falls früher – die erste Ausstellung einer Munitionserwerbserlaubnis. Hatten Sie schon vorher eine WBK aus anderem Grund (z. B. als Jäger oder Erbe), kann ein früheres Datum gelten; das klärt Ihre Waffenbehörde.</p>
+    </fieldset>
+
+    <fieldset>
+      <legend>Ihre Waffen liegen …</legend>
+      <div class="wahl">
+        <label><input type="radio" name="kontingent" value="grund" aria-describedby="fr-hilfe-kontingent fr-fehler-kontingent"> im Grundkontingent</label>
+        <label><input type="radio" name="kontingent" value="ueber" aria-describedby="fr-hilfe-kontingent fr-fehler-kontingent"> (auch) über dem Grundkontingent</label>
+      </div>
+      <p id="fr-fehler-kontingent" class="fehler" role="alert" hidden></p>
+      <p id="fr-hilfe-kontingent" class="hilfe">Grundkontingent: bis zu drei halbautomatische Langwaffen und bis zu zwei mehrschüssige Kurzwaffen für Patronenmunition. Waffen auf der gelben WBK zählen nicht dazu. Im Zweifel steht es in Ihrem Erlaubnisbescheid.</p>
+    </fieldset>
+
+    <button type="submit" class="btn-gold">Fristen berechnen</button>
+  </form>
+
+  <div id="fr-ergebnis" class="fr-ergebnis" aria-live="polite" hidden></div>
+
+  <div class="app-box">
+    <p>Fristen dauerhaft im Blick: Die scheibenklar-App erinnert Sie an Ihre WBK-Fristen und zählt Ihre Schießbuch-Termine für den Nachweis automatisch.</p>
+    <a class="btn-gold" href="https://scheibenklar.vercel.app/?src=rechner" target="_blank" rel="noopener">Fristen in der App verwalten – kostenlos</a>
+    <p class="klein">Fristen-Tracker kostenlos für eine WBK. Ihre Daten bleiben auf Ihrem Gerät.</p>
+  </div>
+
+  <p class="rechtlich">Keine Rechtsberatung. Der Rechner gibt eine unverbindliche Orientierung auf Grundlage Ihrer Angaben und des Waffengesetzes (Stand 31.10.2026). Maßgeblich sind die Anforderungen Ihrer Waffenbehörde und Ihres Schießsportverbands.</p>
+  <p class="rechtlich">Ihre Eingaben bleiben in diesem Browserfenster. Keine Anmeldung, keine Cookies, keine Speicherung.</p>
+</main>
+
+<footer>
+  <div class="footer-left">
+    scheibenklar · © 2026 Sebastian Deutrich<br>
+    Entwickelt von Schützen für Schützen · DSGVO-konform · werbefrei · Local-First
+  </div>
+  <div class="footer-links">
+    <a href="/fristenrechner" aria-current="page">Fristenrechner</a>
+    <a href="/datenschutz.html">Datenschutz</a>
+    <a href="/impressum.html">Impressum</a>
+    <a href="https://scheibenklar.vercel.app/agb.html">AGB</a>
+    <a href="mailto:hallo@scheibenklar.app">Kontakt</a>
+    <a href="https://scheibenklar.vercel.app" target="_blank" rel="noopener">App öffnen</a>
+  </div>
+  <a class="footer-kuendigen" href="https://scheibenklar.vercel.app/kuendigen.html">Verträge hier kündigen</a>
+  <a class="footer-kuendigen" href="https://scheibenklar.vercel.app/widerruf.html">Vertrag widerrufen</a>
+</footer>
+
+<script src="/js/dw-widget.js"></script>
+<script src="/js/fristenrechner.js"></script>
+</body>
+</html>
