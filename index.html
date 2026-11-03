@@ -163,14 +163,53 @@
   .mod-card h3 { font-size: 14px; font-weight: 500; margin-bottom: 6px; }
   .mod-card p { font-size: 13px; color: var(--muted); line-height: 1.5; }
 
-  /* VERGLEICH */
-  .compare-table { width: 100%; border-collapse: collapse; font-size: 14px; }
-  .compare-table th {
+  /* ZIELGRUPPEN-UMSCHALTER */
+  .zg-tabs {
+    display: inline-flex; gap: 4px; padding: 4px; margin-top: 1.5rem; margin-bottom: 1.5rem; max-width: 100%;
+    background: var(--card); border: 0.5px solid var(--gold-border); border-radius: var(--r);
+  }
+  .zg-tabs[hidden] { display: none; }
+  .zg-tab {
+    flex: 1 1 0; padding: 10px 22px; white-space: nowrap;
+    background: transparent; color: var(--muted);
+    font: inherit; font-size: 14px; font-weight: 500;
+    border: none; border-radius: 8px; cursor: none;
+    transition: background 0.15s, color 0.15s;
+  }
+  .zg-tab:hover { color: var(--text); }
+  .zg-tab[aria-selected="true"] { background: var(--gold); color: var(--night); font-weight: 600; }
+  .zg-tab:focus-visible, .compare-wrap:focus-visible { outline: 2px solid var(--gold-l); outline-offset: 2px; }
+  .zg-panel, .markt-kasten {
+    background: var(--card); border: 0.5px solid var(--gold-border);
+    border-radius: var(--r); padding: 2rem;
+  }
+  .zg-panel { margin-top: 1.5rem; }
+  .zg-tabs:not([hidden]) + .zg-panel { margin-top: 0; }
+  .zg-panel[hidden] { display: none; }
+  .zg-panel h3 { font-size: 18px; font-weight: 500; margin-bottom: 1.25rem; }
+  .zg-liste { padding-left: 1.1rem; display: flex; flex-direction: column; gap: 10px; }
+  .zg-liste li { font-size: 14px; color: var(--muted); line-height: 1.55; }
+  .zg-liste li::marker { color: var(--gold); }
+  .zg-zeile { font-size: 14px; color: var(--text); line-height: 1.55; margin: 1.5rem 0 1.25rem; }
+  .zg-cta { display: inline-block; max-width: 100%; text-align: center; font-size: 14px; padding: 12px 24px; }
+  .zg-cta:hover { color: var(--night); }
+
+  /* MARKTÜBERBLICK */
+  .compare-wrap { overflow-x: auto; border: 0.5px solid var(--gold-border); border-radius: var(--r); }
+  .compare-table { width: 100%; min-width: 760px; border-collapse: separate; border-spacing: 0; font-size: 14px; }
+  .compare-table thead th {
     text-align: left; padding: 12px 16px;
     font-size: 12px; font-weight: 500; color: var(--muted);
     border-bottom: 0.5px solid var(--gold-border);
   }
-  .compare-table th.highlight { color: var(--gold); }
+  .compare-table thead th.highlight { color: var(--gold); }
+  .compare-table tbody th {
+    text-align: left; font-weight: 400;
+    padding: 12px 16px;
+    border-bottom: 0.5px solid rgba(255,255,255,0.04);
+    color: var(--muted);
+    vertical-align: top;
+  }
   .compare-table td {
     padding: 12px 16px;
     border-bottom: 0.5px solid rgba(255,255,255,0.04);
@@ -178,10 +217,21 @@
     vertical-align: top;
   }
   .compare-table td.highlight { color: var(--text); }
-  .compare-table tr:last-child td { border-bottom: none; }
-  .compare-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .compare-table tbody tr:last-child td, .compare-table tbody tr:last-child th { border-bottom: none; }
+  .compare-table tbody tr:hover td { background: rgba(255,255,255,0.02); }
+  /* Erste Spalte bleibt beim waagerechten Scrollen stehen; deckender Hintergrund, damit nichts durchscheint */
+  .compare-table thead th:first-child, .compare-table tbody th {
+    width: 26%; position: sticky; left: 0; z-index: 1; background: var(--night);
+    border-right: 0.5px solid var(--gold-border);
+  }
+  .markt-kasten { margin-top: 1.5rem; }
+  .markt-kasten h3 { font-size: 15px; font-weight: 500; margin-bottom: 1rem; }
+  .markt-fussnote { font-size: 11px; color: var(--muted); margin-top: 0.75rem; line-height: 1.6; }
+  .markt-abschluss {
+    margin: 3rem auto 0; max-width: 720px; text-align: center;
+    font-size: clamp(18px, 2.4vw, 22px); font-weight: 500; line-height: 1.45; color: var(--gold-l);
+  }
   .chk { color: var(--gold); }
-  .cross { color: #444; }
 
   /* ZEITERSPARNIS */
   .time-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -294,8 +344,12 @@
     .nav-links { display: none; }
     .price-grid { grid-template-columns: 1fr; }
     .time-grid { grid-template-columns: 1fr; }
-    .compare-table { font-size: 12px; }
-    .compare-table th, .compare-table td { padding: 8px 10px; }
+    .compare-table { font-size: 12px; min-width: 640px; }
+    .compare-table thead th, .compare-table tbody th, .compare-table td { padding: 8px 10px; }
+    .compare-table thead th:first-child, .compare-table tbody th { width: 130px; min-width: 130px; max-width: 130px; }
+    .zg-panel, .markt-kasten { padding: 1.25rem; }
+    .zg-tabs { display: flex; }
+    .zg-tab { padding: 10px 8px; }
   }
   @media (max-width: 390px) {
     .nav-logo img { width: 40px; height: 40px; }
@@ -320,7 +374,7 @@
   <ul class="nav-links">
     <li><a href="/fristenrechner">Fristenrechner</a></li>
     <li><a href="#module">Module</a></li>
-    <li><a href="#vergleich">Vergleich</a></li>
+    <li><a href="#vergleich">Für wen</a></li>
     <li><a href="#preise">Preise</a></li>
     <li><a href="#start">Start</a></li>
     <li><a href="#kontakt">Kontakt</a></li>
@@ -391,93 +445,84 @@
 
 <hr class="div">
 
-<!-- VERGLEICH -->
+<!-- ZIELGRUPPEN -->
 <section class="section" id="vergleich">
   <div class="container">
-    <div class="sec-eye">Marktvergleich</div>
-    <div class="sec-title">Wie schneidet scheibenklar ab?</div>
-    <p class="sec-sub">Ein direkter Vergleich mit den etablierten Schießbuch-Apps im deutschsprachigen Raum.</p>
-    <div style="overflow-x:auto; border: 0.5px solid var(--gold-border); border-radius: var(--r);">
+    <div class="sec-eye">FÜR WEN</div>
+    <h2 class="sec-title" id="zg-titel">Gemacht für Schützen – und für ihren Verein</h2>
+    <!-- Ohne JavaScript bleibt die Reiterleiste versteckt und beide Panels sind sichtbar; js/zielgruppen-tabs.js schaltet um. -->
+    <div class="zg-tabs" role="tablist" aria-labelledby="zg-titel" hidden>
+      <button type="button" class="zg-tab" role="tab" id="zg-tab-schuetzen" aria-selected="true" aria-controls="zg-panel-schuetzen">Für Schützen</button>
+      <button type="button" class="zg-tab" role="tab" id="zg-tab-vereine" aria-selected="false" aria-controls="zg-panel-vereine" tabindex="-1">Für Vereine</button>
+    </div>
+    <div class="zg-panel" role="tabpanel" id="zg-panel-schuetzen" aria-labelledby="zg-tab-schuetzen">
+      <h3>Ihr Bedürfnisnachweis ohne Zettelwirtschaft.</h3>
+      <ul class="zg-liste">
+        <li>Schießbuch nach § 14 – Kurz- und Langwaffe getrennt, jederzeit vorzeigbar (kostenlos)</li>
+        <li>Fristen im Blick – 5-Jahres-Prüfung, Schießnachweis, 10-Jahres-Regel (kostenlos)</li>
+        <li>WBK und Waffen geordnet – 1 WBK und 2 Waffen gratis, mehr mit Premium</li>
+        <li>Trefferbild per Foto auswerten – mit KI-Coaching und Trendanalyse in Premium</li>
+      </ul>
+      <p class="zg-zeile">Kostenlos starten · Premium 5 €/Monat, jederzeit kündbar</p>
+      <a class="btn-gold zg-cta" href="/fristenrechner">Fristen jetzt prüfen – ohne Anmeldung</a>
+    </div>
+    <div class="zg-panel" role="tabpanel" id="zg-panel-vereine" aria-labelledby="zg-tab-vereine">
+      <h3>Die Schießsport-Aufgaben, die Ihre Vereinssoftware nicht kennt.</h3>
+      <ul class="zg-liste">
+        <li>Prüffristen Ihres Schießstands nach § 27a mit Ampel</li>
+        <li>Wettkampfplaner mit Rangliste</li>
+        <li>Protokoll-Vorlagen für Mitgliederversammlung und Vorstand, druckfertig</li>
+        <li>Arbeitsstunden mit Jahresexport</li>
+        <li>Fördermittel-Finder nach Bundesland</li>
+        <li>Trainingsplan-Vorlagen für Übungsleiter</li>
+      </ul>
+      <p class="zg-zeile">Vereinspaket 200 €/Jahr – ergänzt Ihre Mitgliederverwaltung, ersetzt sie nicht.</p>
+      <a class="btn-gold zg-cta" href="https://scheibenklar.vercel.app/?kaufen=verein">Vereinspaket ansehen</a>
+    </div>
+  </div>
+</section>
+
+<hr class="div">
+
+<!-- MARKTÜBERBLICK -->
+<section class="section" id="marktueberblick">
+  <div class="container">
+    <div class="sec-eye">MARKTÜBERBLICK</div>
+    <h2 class="sec-title">Ehrlich eingeordnet</h2>
+    <p class="sec-sub">Stand: November 2026</p>
+    <div class="compare-wrap" role="region" aria-label="Marktüberblick nach Produktkategorien" tabindex="0">
       <table class="compare-table">
         <thead>
           <tr>
-            <th>Kriterium</th>
-            <th class="highlight">scheibenklar</th>
-            <th>Anbieter A &#128211;</th>
-            <th>Anbieter B &#11044;</th>
+            <th scope="col">Kriterium</th>
+            <th scope="col">Papier &amp; Excel</th>
+            <th scope="col">Typische Schießbuch-Apps</th>
+            <th scope="col">Allgemeine Vereinssoftware</th>
+            <th scope="col" class="highlight">scheibenklar</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>Datenspeicherung</td>
-            <td class="highlight"><span class="chk">✓</span> Local-First, auf dem Gerät</td>
-            <td>Cloud-Account nötig</td>
-            <td>Cloud-Account nötig</td>
-          </tr>
-          <tr>
-            <td>Kostenloser Umfang</td>
-            <td class="highlight"><span class="chk">✓</span> 4 Module dauerhaft kostenlos</td>
-            <td>10 Einträge / 2 Waffen</td>
-            <td>Basisfunktionen, Social-Feed</td>
-          </tr>
-          <tr>
-            <td>§14-Schießbuch</td>
-            <td class="highlight"><span class="chk">✓</span> Ja</td>
-            <td><span class="chk">✓</span> Ja</td>
-            <td><span class="chk">✓</span> Ja</td>
-          </tr>
-          <tr>
-            <td>WBK-Verwaltung &amp; Nachweisfristen</td>
-            <td class="highlight"><span class="chk">✓</span> Ja, Foto-Ablage mit Premium</td>
-            <td><span class="cross">–</span> Nein</td>
-            <td><span class="cross">–</span> Nein</td>
-          </tr>
-          <tr>
-            <td>KI-Trefferauswertung</td>
-            <td class="highlight"><span class="chk">✓</span> Ja, per Kamera</td>
-            <td><span class="cross">–</span> Nein</td>
-            <td>Ringauswertung, ohne KI-Coaching</td>
-          </tr>
-          <tr>
-            <td>KI-Trendanalyse</td>
-            <td class="highlight"><span class="chk">✓</span> Ja (Premium)</td>
-            <td><span class="cross">–</span> Nein</td>
-            <td><span class="cross">–</span> Nein</td>
-          </tr>
-          <tr><td>Leistungsabzeichen-Abgleich</td><td class="highlight"><span class="chk">✓</span> Ja, DSB-Anforderungen</td><td><span class="cross">–</span> Nein</td><td><span class="cross">–</span> Nein</td></tr>
-          <tr>
-            <td>Werbung / Social-Feed</td>
-            <td class="highlight"><span class="chk">✓</span> Keine</td>
-            <td>Keine</td>
-            <td>Social-„Stammtisch"-Feed</td>
-          </tr>
-          <tr><td>Wettkampfplaner mit Rangliste</td><td class="highlight"><span class="chk">✓</span> Ja (Vereinspaket)</td><td><span class="cross">–</span> Nein</td><td><span class="chk">✓</span> Kaderverwaltung</td></tr>
-<tr><td>Arbeitsstunden-Verwaltung</td><td class="highlight"><span class="chk">✓</span> Ja, mit Jahresexport</td><td><span class="cross">–</span> Nein</td><td><span class="cross">–</span> Nein</td></tr>
-<tr><td>Protokoll-Vorlagen (MV/Vorstand)</td><td class="highlight"><span class="chk">✓</span> Ja, druckfertig</td><td><span class="cross">–</span> Nein</td><td><span class="cross">–</span> Nein</td></tr>
-<tr><td>Fördermittel-Finder</td><td class="highlight"><span class="chk">✓</span> Ja, nach Bundesland</td><td><span class="cross">–</span> Nein</td><td><span class="cross">–</span> Nein</td></tr>
-<tr><td>Prüffristen für Ihren Schießstand nach § 27a WaffG</td><td class="highlight"><span class="chk">✓</span> Ja, mit Ampel</td><td><span class="cross">–</span> Nein</td><td><span class="cross">–</span> Nein</td></tr>
-<tr><td>Trainingsplan-Vorlagen (Übungsleiter)</td><td class="highlight"><span class="chk">✓</span> Ja</td><td><span class="cross">–</span> Nein</td><td><span class="cross">–</span> Nein</td></tr>
-          <tr>
-            <td>Vereinslösung</td>
-            <td class="highlight"><span class="chk">✓</span> Ja, 200 €/Jahr</td>
-            <td><span class="cross">–</span> Nein</td>
-            <td><span class="cross">–</span> Nein</td>
-          </tr>
-          <tr>
-            <td>Einstieg Premium</td>
-            <td class="highlight">5 €/Monat</td>
-            <td>ab 1,99 €/3 Monate</td>
-            <td>Abo, Preis variabel</td>
-          </tr>
+          <tr><th scope="row">Schießbuch nach § 14</th><td><span class="chk">✓</span> von Hand</td><td><span class="chk">✓</span></td><td>selten</td><td class="highlight"><span class="chk">✓</span></td></tr>
+          <tr><th scope="row">Fristen nach § 14 WaffG berechnet</th><td>–</td><td>selten</td><td>–</td><td class="highlight"><span class="chk">✓</span></td></tr>
+          <tr><th scope="row">WBK-Überblick</th><td>–</td><td>teils</td><td>–</td><td class="highlight"><span class="chk">✓</span></td></tr>
+          <tr><th scope="row">Trefferauswertung per Foto</th><td>–</td><td>teils</td><td>–</td><td class="highlight"><span class="chk">✓</span> mit KI-Coaching</td></tr>
+          <tr><th scope="row">Schießsport-Vereinsaufgaben (§ 27a, Wettkampf)</th><td>von Hand</td><td>selten</td><td>–</td><td class="highlight"><span class="chk">✓</span> Vereinspaket</td></tr>
+          <tr><th scope="row">Mitglieder, Beiträge, SEPA</th><td>Excel</td><td>–</td><td><span class="chk">✓</span></td><td class="highlight">– bewusst nicht</td></tr>
+          <tr><th scope="row">Wo liegen Ihre Einträge?</th><td>bei Ihnen</td><td>je nach App</td><td>meist beim Anbieter</td><td class="highlight">auf Ihrem Gerät</td></tr>
+          <tr><th scope="row">Kosten</th><td>0 €</td><td>kostenlos bis Abo</td><td>meist Abo</td><td class="highlight">4 Module gratis · 5 €/Monat · Verein 200 €/Jahr</td></tr>
         </tbody>
       </table>
     </div>
-    <p style="font-size:12px; color: var(--muted); margin-top: 1rem; line-height: 1.6;">
-      Der entscheidende Unterschied: Wettbewerber verlangen einen Cloud-Account, sobald Sie über die Basisfunktionen hinausgehen. scheibenklar bleibt lokal – auch im Premium-Modus bestimmen Sie, was Ihr Gerät verlässt.
-    </p>
-    <p style="font-size:11px; color: var(--muted); margin-top: 0.75rem; opacity: 0.7; line-height: 1.6;">
-      Vergleich mit zwei repräsentativen Anbietern im deutschsprachigen Markt. Angaben basieren auf öffentlich zugänglichen Store- und Webseiten-Informationen zum Zeitpunkt der Recherche. Produktnamen sind Eigentum der jeweiligen Inhaber. Funktionsumfang kann sich durch Updates ändern.
-    </p>
+    <div class="markt-kasten">
+      <h3>Wo andere besser passen</h3>
+      <ul class="zg-liste">
+        <li>Sie brauchen Beitragseinzug und Mitgliederverwaltung? Dann ist eine Vereinssoftware richtig. scheibenklar ergänzt sie nur.</li>
+        <li>Sie wollen Schuss für Schuss live am Stand zählen? Dafür gibt es spezialisierte Apps. scheibenklar wertet erst nach dem Training aus.</li>
+        <li>Ein kostenloses Konto brauchen Sie nur für die KI-Funktionen und das Abo. Ihre Einträge werden auf Ihrem Gerät gespeichert. Nutzen Sie eine KI-Funktion, werden das Foto bzw. die dafür nötigen Trainingsangaben und -ergebnisse zur Auswertung an Google übertragen.</li>
+      </ul>
+    </div>
+    <p class="markt-fussnote">Einordnung nach Produktkategorien, nicht nach einzelnen Anbietern. Der Funktionsumfang einzelner Produkte kann abweichen. Stand: November 2026.</p>
+    <p class="markt-abschluss">scheibenklar ist kein weiteres Schießbuch, sondern Ihr Bedürfnisnachweis, Ihre WBK und Ihr Verein an einem Ort.</p>
   </div>
 </section>
 
@@ -1022,5 +1067,6 @@ document.getElementById('btn-nachricht-senden').addEventListener('click', functi
   feld.addEventListener('blur', function () { feld.style.borderColor = 'var(--gold-border)'; });
 });
 </script>
+<script src="/js/zielgruppen-tabs.js"></script>
 </body>
 </html>
